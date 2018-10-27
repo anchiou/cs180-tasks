@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ListGroup, ListGroupItem } from 'reactstrap';
+import { ListGroup, ListGroupItem } from 'reactstrap';
 import CreatList from '../components/CreateList';
 class Lists extends React.Component {
     render() {

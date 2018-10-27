@@ -8,13 +8,13 @@
 
 .carousel .carousel-item {
     height: 500px;
-  }
+}
 
-  .carousel .carousel-item img {
+.carousel .carousel-item img {
     min-height: 500px;
     max-height: 500px;
     object-fit: cover;
-  }
+}
 
 #one{
     display: inline-block;
@@ -23,6 +23,7 @@
     height: 90%;
     word-wrap: break-word;
 }
+
 #two{
    width: 30%;
    height: 10%;
@@ -30,5 +31,3 @@
    position: absolute;
    left: 68%;
 }
-
-
