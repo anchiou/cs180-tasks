@@ -1,0 +1,33 @@
+.button {
+    float: right;
+}
+
+.carousel-item > img {
+    width: 100%;
+}
+
+.carousel .carousel-item {
+    height: 500px;
+}
+
+.carousel .carousel-item img {
+    min-height: 500px;
+    max-height: 500px;
+    object-fit: cover;
+}
+
+#one{
+    display: inline-block;
+    position: relative;
+    width: 65%;
+    height: 90%;
+    word-wrap: break-word;
+}
+
+#two{
+   width: 30%;
+   height: 10%;
+   display: inline-block;
+   position: absolute;
+   left: 68%;
+}

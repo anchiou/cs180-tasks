@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tasker.backend.mapper.UserDao">
+
+    <insert id="addUser">
+        INSERT INTO Users (UserID, Email, Username, `Password`)
+        VALUES (#{userID}, #{email}, #{username}, #{password});
+    </insert>
+
+    <update id="updateUser">
+        UPDATE Users SET
+            Email = #{email},
+            Username = #{username},
+            `Password` = #{password}
+        WHERE UserID = #{userId};
+    </update>
+
+    <delete id="deleteUser">
+        DELETE FROM Users WHERE UserID = #{userId};
+    </delete>
+
+</mapper>

@@ -1,0 +1,43 @@
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# User-specific stuff
+src/backend/.idea/**/workspace.xml
+src/backend/.idea/**/tasks.xml
+src/backend/.idea/**/usage.statistics.xml
+src/backend/.idea/**/dictionaries
+src/backend/.idea/**/shelf
+
+# Generated files
+src/backend/.idea/**/contentModel.xml
+
+# Sensitive or high-churn files
+src/backend/.idea/**/dataSources/
+src/backend/.idea/**/dataSources.ids
+src/backend/.idea/**/dataSources.local.xml
+src/backend/.idea/**/sqlDataSources.xml
+src/backend/.idea/**/dynamic.xml
+src/backend/.idea/**/uiDesigner.xml
+src/backend/.idea/**/dbnavigator.xml
+
+# Gradle
+src/backend/.idea/**/libraries
+
+# Maven
+src/backend/**/target
+
+# Gradle and Maven with auto-import
+# When using Gradle or Maven with auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.  Uncomment if using
+# auto-import.
+src/backend/.idea/modules.xml
+src/backend/.idea/*.iml
+src/backend/.idea/modules
+
+# File-based project format
+*.iws
+
+# IntelliJ
+out/
+
+# Editor-based Rest Client
+src/backend/.idea/httpRequests
