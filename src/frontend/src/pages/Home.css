@@ -1,33 +1,32 @@
-.button {
-    float: right;
+.App-container {
+    max-width: 950px;
 }
 
-.carousel-item > img {
-    width: 100%;
+.Content {
+    background-color: #282c34f5;
+    /* float: right; */
+    /* width: 658px; */
+    padding-left: 30px;
+    padding-top: 50px;
 }
 
-.carousel .carousel-item {
-    height: 500px;
+.Navbar {
+    background-color: #282c34;
+    font-size: calc(10px + 2vmin);
 }
 
-.carousel .carousel-item img {
-    min-height: 500px;
-    max-height: 500px;
-    object-fit: cover;
+.Navbrand-img {
+    max-width: 20%;
+    float: left;
 }
 
-#one{
-    display: inline-block;
-    position: relative;
-    width: 65%;
-    height: 90%;
-    word-wrap: break-word;
-}
-
-#two{
-   width: 30%;
-   height: 10%;
-   display: inline-block;
-   position: absolute;
-   left: 68%;
+.Sidebar {
+    background-color: #282c34fd;
+    /* float: left; */
+    /* width: 265px; */
+    padding-top: 50px;
+    padding-left: 30px;
+    /* position: fixed; */
+    overflow-x: hidden;
+    overflow-y: hidden;
 }

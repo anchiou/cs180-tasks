@@ -11,9 +11,11 @@ import {
 
 import './Home.css';
 import logo from '../tasker.png';
+import List from '../components/List';
+import ListTable from '../components/ListTable';
 
-class Home extends React.Component {
-    render () {
+class Lists extends React.Component {
+    render() {
         return (
             <Container className="App-container">
                 <Row>
@@ -24,17 +26,21 @@ class Home extends React.Component {
                         </NavbarBrand>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
-                                <NavLink href="/lists">Logout</NavLink>
+                                <NavLink href="/">Logout</NavLink>
                             </NavItem>
                         </Nav>
                     </Navbar>
                 </Row>
-                <Col className="Sidebar">
-
-                </Col>
+                <Row>
+                    <Col className="Sidebar" sm="4">
+                        <ListTable />
+                    </Col>
+                    <Col className="Content" sm="8">
+                        <List />
+                    </Col>
+                </Row>
             </Container>
         );
     }
 };
-
-export default Home;
+export default Lists;
