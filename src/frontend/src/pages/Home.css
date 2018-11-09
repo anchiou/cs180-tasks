@@ -1,11 +1,9 @@
 .App-container {
-    max-width: 950px;
+    max-width: 960px;
 }
 
 .Content {
     background-color: #282c34f5;
-    /* float: right; */
-    /* width: 658px; */
     padding-left: 30px;
     padding-top: 50px;
 }
@@ -22,10 +20,10 @@
 
 .Sidebar {
     background-color: #282c34fd;
-    /* float: left; */
-    /* width: 265px; */
-    padding-top: 50px;
+    font-size: calc(6px + 2vmin);
+    height: 591px;
     padding-left: 30px;
+    padding-top: 50px;
     /* position: fixed; */
     overflow-x: hidden;
     overflow-y: hidden;

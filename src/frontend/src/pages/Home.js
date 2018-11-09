@@ -24,14 +24,16 @@ class Home extends React.Component {
                         </NavbarBrand>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
-                                <NavLink href="/lists">Logout</NavLink>
+                                <NavLink href="/lists">Login</NavLink>
                             </NavItem>
                         </Nav>
                     </Navbar>
                 </Row>
-                <Col className="Sidebar">
+                <Row>
+                    <Col className="Sidebar">
 
-                </Col>
+                    </Col>
+                </Row>
             </Container>
         );
     }
