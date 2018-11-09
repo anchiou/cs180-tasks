@@ -1,0 +1,23 @@
+img {
+    display: block;
+    max-width: 80%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.No-padding {
+    padding: 0rem .5rem;
+}
+
+.Register {
+    background-color: #282c34;
+    margin: auto;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    padding-bottom: 5%;
+}
+
+.Text {
+    padding: 1rem 0rem;
+}
