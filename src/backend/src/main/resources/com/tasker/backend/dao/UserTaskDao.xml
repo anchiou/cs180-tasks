@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tasker.backend.mapper.UserTaskDao">
+<mapper namespace="com.tasker.backend.dao.UserTaskDao">
 
-    <insert id="addTask" parameterType="com.tasker.backend.entity.UserTask">
+    <insert id="insert" parameterType="com.tasker.backend.entity.UserTask">
         INSERT INTO UserTasks (TaskID, TaskName, Status, Deadline, Priority, Description, ListID)
-        VALUES (#{id}, #{name}, #{status}, #{deadline}, #{priority}, #{description}, #{listId});
+        VALUES (#{id}, #{taskName}, #{status}, #{deadline}, #{priority}, #{description}, #{listId});
     </insert>
 
     <update id="update" parameterType="com.tasker.backend.entity.UserTask">
         UPDATE UserTasks SET
-            TaskName = #{name},
+            TaskName = #{taskName},
             Status = #{status},
             Deadline = #{deadline},
             Priority = #{priority},
             Description = #{description}
         WHERE TaskID = #{id};
     </update>
+
+    <select id="get" resultType="com.tasker.backend.entity.UserTask">
+        SELECT * FROM UserTasks WHERE TaskID = #{id};
+    </select>
 
     <delete id="delete">
         DELETE FROM UserTasks WHERE TaskID = #{id};

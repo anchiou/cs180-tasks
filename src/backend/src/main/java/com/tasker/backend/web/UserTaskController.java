@@ -1,15 +1,14 @@
 package com.tasker.backend.web;
 
 import com.tasker.backend.RestResponse;
+import com.tasker.backend.entity.UserTask;
 import com.tasker.backend.service.UserTaskService;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/tasks")
 public class UserTaskController {
     static Logger logger = LoggerFactory.getLogger(UserTaskController.class);
@@ -17,18 +16,20 @@ public class UserTaskController {
     @Autowired
     UserTaskService userTaskService;
 
-    /*@GetMapping
-    public String getTask() {
+    @GetMapping
+    public String getTask(@RequestParam("id") String id) {
+        String result = "";
         try {
-            userTaskService.getTask();
-        } catch (IOException e) {
+            UserTask data = userTaskService.getTask(id);
+            result = data.toString();
+        } catch (Error e) {
             logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
             e.printStackTrace();
         }
-        return "tasks";
+        return result;
     }
 
-    @GetMapping("/tasks?sort=deadline")
+    /*@GetMapping("/tasks?sort=deadline")
     public String sortByDeadline() {
         return "deadlines sorted";
     }
@@ -40,19 +41,25 @@ public class UserTaskController {
 
 
     @PostMapping
-    public RestResponse addTask(@RequestParam JSONObject data) {
+    public String addTask(@RequestBody UserTask data) {
+        logger.info("---------Controller In post");
         try {
-           userTaskService.addTask(data);
+           int result = userTaskService.addTask(data);
+           logger.info("addTask -> {}", result);
         } catch (Error e) {
-            return new RestResponse(400, e.getMessage() + "Failed to add task");
+//            return new RestResponse(400, e.getMessage() + "Failed to add task");
+            return "Failed to add task";
         }
-        return new RestResponse(201, "Successfully added task");
+//        return new RestResponse(201, "Successfully added task");
+        return "Successfully added task";
+
     }
 
     @PutMapping
-    public RestResponse updateTask(JSONObject data) {
+    public RestResponse updateTask(String data) {
         try {
-            userTaskService.updateTask(data);
+            int result = userTaskService.updateTask(data);
+            logger.info("updateTask -> {}", result);
         } catch (Error e) {
             return new RestResponse(400, e.getMessage() + "Failed to update task");
         }

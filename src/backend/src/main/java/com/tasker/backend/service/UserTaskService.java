@@ -1,15 +1,15 @@
 package com.tasker.backend.service;
 
-import com.tasker.backend.entity.UserTask;
-import com.tasker.backend.dao.UserTaskDao;
 import org.json.JSONObject;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.tasker.backend.dao.UserTaskDao;
+import com.tasker.backend.entity.UserTask;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-
 import static java.sql.Date.valueOf;
 
 @Service
@@ -19,35 +19,30 @@ public class UserTaskService {
     @Autowired
     UserTaskDao userTaskDao;
 
-    public UserTask addTask(JSONObject data) {
-//        JSONObject data = new JSONObject(String);
-
-        String id = data.getString("id");
-        String name = data.getString("name");
-        boolean status = data.getBoolean("status");
-        Date deadline = valueOf(data.getString("deadline"));
-        int priority = data.optInt("priority");
-        String description = data.optString("description");
-
-        UserTask task = new UserTask(id, name, status, deadline, priority, description);
-        userTaskDao.addTask(task);
-
-        return task;
+    public UserTask getTask(String id) {
+        return userTaskDao.get(id);
     }
 
-    public UserTask updateTask(JSONObject data) {
-        //JSONObject data = new JSONObject(data);
+    @Transactional(readOnly = false)
+    public int addTask(UserTask task) {
+        logger.info("-------Service addTask");
+        return userTaskDao.insert(task);
+    }
 
-        String id = data.getString("id");
-        String name = data.getString("name");
-        boolean status = data.getBoolean("status");
-        Date deadline = valueOf(data.getString("deadline"));
-        int priority = data.optInt("priority");
-        String description = data.optString("description");
+    public int updateTask(String data) {
+        JSONObject jsonObject = new JSONObject(data);
 
-        UserTask task = new UserTask(id, name, status, deadline, priority, description);
-        userTaskDao.updateTask(task);
-        return task;
+        String id = jsonObject.getString("id");
+        String name = jsonObject.getString("name");
+        boolean status = jsonObject.getBoolean("status");
+        Date deadline = valueOf(jsonObject.getString("deadline"));
+        int priority = jsonObject.optInt("priority");
+        String description = jsonObject.optString("description");
+        String listId = jsonObject.getString("listId");
+
+
+        UserTask task = new UserTask(id, name, status, deadline, priority, description, listId);
+        return userTaskDao.update(task);
     }
 
     public String deleteTask(String id) {
