@@ -26,7 +26,7 @@ class Lists extends React.Component {
                         </NavbarBrand>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
-                                <NavLink href="/">Logout</NavLink>
+                                <NavLink href="/login">Logout</NavLink>
                             </NavItem>
                         </Nav>
                     </Navbar>

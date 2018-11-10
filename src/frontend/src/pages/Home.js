@@ -24,7 +24,7 @@ class Home extends React.Component {
                         </NavbarBrand>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
-                                <NavLink href="/lists">Login</NavLink>
+                                <NavLink href="/lists">Lists</NavLink>
                             </NavItem>
                         </Nav>
                     </Navbar>
