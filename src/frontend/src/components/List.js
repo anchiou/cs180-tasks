@@ -55,6 +55,11 @@ class List extends React.Component {
         });
     }
 
+    addTask = (e) => {
+        console.log("addTask event----", e);
+
+    }
+
     render() {
         return (
             <div>
