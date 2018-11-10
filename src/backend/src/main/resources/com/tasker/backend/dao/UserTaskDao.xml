@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tasker.backend.mapper.UserTaskDao">
 
-    <insert id="insert" parameterType="com.tasker.backend.entity.UserTask">
+    <insert id="addTask" parameterType="com.tasker.backend.entity.UserTask">
         INSERT INTO UserTasks (TaskID, TaskName, Status, Deadline, Priority, Description, ListID)
         VALUES (#{id}, #{name}, #{status}, #{deadline}, #{priority}, #{description}, #{listId});
     </insert>
