@@ -7,7 +7,7 @@ public class UserTask {
     // ------------------------
     // PRIVATE FIELDS
     // ------------------------
-    private String id;
+    private int id;
 
     // UserTask taskName
     private String taskName;
@@ -25,7 +25,7 @@ public class UserTask {
     private String description;
 
     // UserTask associated ListID
-    private String listId;
+    private int listId;
 
 
     // ------------------------
@@ -34,14 +34,14 @@ public class UserTask {
 
     public UserTask() { }
 
-    public UserTask(String id, String name, boolean status, String listId) {
+    public UserTask(int id, String name, boolean status, int listId) {
         this.id = id;
         this.taskName = name;
         this.status = status;
         this.listId = listId;
     }
 
-    public UserTask(String id, String taskName, boolean status, Date deadline, int priority, String description, String listId) {
+    public UserTask(int id, String taskName, boolean status, Date deadline, int priority, String description, int listId) {
         this.id = id;
         this.taskName = taskName;
         this.status = status;
@@ -53,11 +53,11 @@ public class UserTask {
 
     // Getter and setter methods
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(int value) {
         this.id = value;
     }
 
@@ -101,11 +101,11 @@ public class UserTask {
         this.description = value;
     }
 
-    public String getListId() {
+    public int getListId() {
         return listId;
     }
 
-    public void setListId(String value){
+    public void setListId(int value){
         this.listId = value;
     }
 

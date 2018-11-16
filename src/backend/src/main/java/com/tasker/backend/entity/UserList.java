@@ -6,13 +6,13 @@ public class UserList {
     // ------------------------
     // PRIVATE FIELDS
     // ------------------------
-    private String id;
+    private int id;
 
     // UserList listName
     private String listName;
 
     // UserList associated ListID
-    private String userId;
+    private int userId;
 
     // ------------------------
     // PUBLIC METHODS
@@ -20,7 +20,7 @@ public class UserList {
 
     public UserList() { }
 
-    public UserList(String id, String name, String userId) {
+    public UserList(int id, String name, int userId) {
         this.id = id;
         this.listName = name;
         this.userId = userId;
@@ -28,11 +28,11 @@ public class UserList {
 
     // Getter and setter methods
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(int value) {
         this.id = value;
     }
 
@@ -44,11 +44,11 @@ public class UserList {
         this.listName = value;
     }
     
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String value){
+    public void setUserId(int value){
         this.userId = value;
     }
 
