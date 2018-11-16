@@ -3,12 +3,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tasker.backend.dao.UserDao">
 
-    <insert id="addUser">
-        INSERT INTO Users (UserID, Email, Username, `Password`)
-        VALUES (#{userID}, #{email}, #{username}, #{password});
+    <insert id="insert">
+        INSERT INTO Users (Email, Username, `Password`)
+        VALUES (#{email}, #{username}, #{password});
     </insert>
 
-    <update id="updateUser">
+    <update id="update">
         UPDATE Users SET
             Email = #{email},
             Username = #{username},
@@ -16,7 +16,7 @@
         WHERE UserID = #{userId};
     </update>
 
-    <delete id="deleteUser">
+    <delete id="delete">
         DELETE FROM Users WHERE UserID = #{userId};
     </delete>
 

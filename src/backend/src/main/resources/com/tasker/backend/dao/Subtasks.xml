@@ -4,8 +4,8 @@
 <mapper namespace="com.tasker.backend.dao.Subtasks">
 
     <insert id="addSubtask">
-        INSERT INTO Subtasks (SubID, SubName, SubStatus, TaskID)
-        VALUES (#{subtaskId}, #{name}, #{status}, #{taskId});
+        INSERT INTO Subtasks (SubName, SubStatus, TaskID)
+        VALUES (#{name}, #{status}, #{taskId});
     </insert>
 
     <update id="rename">

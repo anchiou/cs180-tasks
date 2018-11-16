@@ -4,8 +4,8 @@
 <mapper namespace="com.tasker.backend.dao.UserTaskDao">
 
     <insert id="insert" parameterType="com.tasker.backend.entity.UserTask">
-        INSERT INTO UserTasks (TaskID, TaskName, Status, Deadline, Priority, Description, ListID)
-        VALUES (#{id}, #{taskName}, #{status}, #{deadline}, #{priority}, #{description}, #{listId});
+        INSERT INTO UserTasks (TaskName, Status, Deadline, Priority, Description, ListID)
+        VALUES (#{taskName}, #{status}, #{deadline}, #{priority}, #{description}, #{listId});
     </insert>
 
     <update id="update" parameterType="com.tasker.backend.entity.UserTask">

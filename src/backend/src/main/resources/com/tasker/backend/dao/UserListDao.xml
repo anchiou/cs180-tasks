@@ -4,8 +4,8 @@
 <mapper namespace="com.tasker.backend.dao.UserListDao">
 
     <insert id="addList">
-        INSERT INTO UserLists (ListID, ListName, UserID)
-        VALUES (#{listId}, #{listName}, #{userId});
+        INSERT INTO UserLists (ListName, UserID)
+        VALUES (#{listName}, #{userId});
     </insert>
 
     <update id="updateList">
