@@ -4,9 +4,9 @@ public interface BasicDao<T> {
 
     public int insert(T entity);
 
-    public int delete(String id);
+    public int delete(int id);
 
     public int update(T Entity);
 
-    public T get(String id);
+    public T get(int id);
 }

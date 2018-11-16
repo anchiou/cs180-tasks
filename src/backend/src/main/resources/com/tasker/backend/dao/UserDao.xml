@@ -16,8 +16,20 @@
         WHERE UserID = #{userId};
     </update>
 
+    <select id="get" resultType="com.tasker.backend.entity.User">
+        SELECT * FROM Users WHERE UserID = #{id};
+    </select>
+
     <delete id="delete">
         DELETE FROM Users WHERE UserID = #{userId};
     </delete>
+
+    <select id="findByEmail" resultType="com.tasker.backend.entity.User">
+        SELECT * FROM Users WHERE Email = #{email};
+    </select>
+
+    <select id="findByUsername" resultType="com.tasker.backend.entity.User">
+        SELECT * FROM Users WHERE Username = #{username};
+    </select>
 
 </mapper>
