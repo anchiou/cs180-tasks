@@ -8,7 +8,7 @@
         VALUES (#{listName}, #{userId});
     </insert>
 
-    <update id="updateList">
+    <update id="renameList">
         UPDATE UserLists SET
             ListName = #{listName},
         WHERE ListID = #{listId};

@@ -6,5 +6,6 @@ import com.tasker.backend.entity.UserTask;
 import java.util.List;
 
 public interface UserListDao extends BasicDao<UserList>{
-    List<UserTask> getTasks(String id);
+    List<UserTask> getTasks(int id);
+    int renameList(int id, String name);
 }
