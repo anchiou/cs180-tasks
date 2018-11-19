@@ -17,18 +17,18 @@ public class UserTaskController {
     UserTaskService userTaskService;
 
     @GetMapping
-    public String getTask(@RequestParam("id") String id) {
+    public String getTask(@RequestParam("id") int id) {
+        logger.info("------ /tasks GET Controller -------");
         String result = "";
         try {
             UserTask data = userTaskService.getTask(id);
             result = data.toString();
         } catch (Error e) {
             logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
-            e.printStackTrace();
+            return new RestResponse(400, e.getMessage() + "Failed to get task", result).toString();
         }
-        return result;
+        return new RestResponse(200, "Successfully got task", result).toString();
     }
-
     /*@GetMapping("/tasks?sort=deadline")
     public String sortByDeadline() {
         return "deadlines sorted";
@@ -39,40 +39,42 @@ public class UserTaskController {
         return "priorities sorted";
     }*/
 
-
     @PostMapping
     public String addTask(@RequestBody UserTask data) {
-        logger.info("---------Controller In post");
+        logger.info("------ /tasks POST Controller -------");
         try {
-           int result = userTaskService.addTask(data);
-           logger.info("addTask -> {}", result);
+            int result = userTaskService.addTask(data);
+            logger.info("addTask -> {}", result);
         } catch (Error e) {
-//            return new RestResponse(400, e.getMessage() + "Failed to add task");
-            return "Failed to add task";
+            logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
+            return new RestResponse(400, e.getMessage() + "Failed to add task", null).toString();
         }
-//        return new RestResponse(201, "Successfully added task");
-        return "Successfully added task";
-
+        return new RestResponse(201, "Successfully added task", null).toString();
     }
 
     @PutMapping
-    public RestResponse updateTask(String data) {
+    public String updateTask(String data) {
+        logger.info("------ /tasks PUT Controller -------");
         try {
             int result = userTaskService.updateTask(data);
             logger.info("updateTask -> {}", result);
         } catch (Error e) {
-            return new RestResponse(400, e.getMessage() + "Failed to update task");
+            logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
+            return new RestResponse(400, e.getMessage() + "Failed to add task", null).toString();
         }
-        return new RestResponse(201, "Successfully updated task");
+        return new RestResponse(201, "Successfully added task", null).toString();
     }
 
     @DeleteMapping
-    public RestResponse deleteTask(String id) {
+    public String deleteTask(@RequestParam("id") int id) {
+        logger.info("------ /tasks DELETE Controller -------");
         try {
-            userTaskService.deleteTask(id);
+            int result = userTaskService.deleteTask(id);
+            logger.info("deleteTask -> {}", result);
         } catch (Error e) {
-            return new RestResponse(400, e.getMessage() + "Failed to delete task");
+            logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
+            return new RestResponse(400, e.getMessage() + "Failed to delete task", null).toString();
         }
-        return new RestResponse(204, "Successfully deleted task");
+        return new RestResponse(204, "Successfully deleted task", null).toString();
     }
 }

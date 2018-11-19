@@ -7,7 +7,6 @@ import com.tasker.backend.service.UserListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +28,9 @@ public class UserListController {
             result = data.toString();
         } catch (Error e) {
             logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
-            return new RestResponse(400, e.getMessage() + "Failed to get tasks").toString();
+            return new RestResponse(400, e.getMessage() + "Failed to get tasks", result).toString();
         }
-        return new RestResponse(200, "Successfully got tasks").toString();
+        return new RestResponse(200, "Successfully got tasks", result).toString();
     }
 
     @PostMapping
@@ -42,9 +41,9 @@ public class UserListController {
             logger.info("addList-> {}", result);
         } catch (Error e) {
             logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
-            return new RestResponse(400, e.getMessage() + "Failed to add list").toString();
+            return new RestResponse(400, e.getMessage() + "Failed to add list", null).toString();
         }
-        return new RestResponse(201, "Successfully added list").toString();
+        return new RestResponse(201, "Successfully added list", null).toString();
     }
 
     @PutMapping("/{id}?rename={name}")
@@ -55,9 +54,8 @@ public class UserListController {
             logger.info("addList-> {}", result);
         } catch (Error e) {
             logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
-            return new RestResponse(400, e.getMessage() + "Failed to rename list").toString();
+            return new RestResponse(400, e.getMessage() + "Failed to rename list", null).toString();
         }
-        return new RestResponse(201, "Successfully renamed list").toString();
+        return new RestResponse(201, "Successfully renamed list", null).toString();
     }
-
 }

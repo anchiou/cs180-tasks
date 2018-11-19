@@ -34,5 +34,4 @@ public class UserListService {
         logger.info("-------Service renameList");
         return userListDao.renameList(id, name);
     }
-
 }

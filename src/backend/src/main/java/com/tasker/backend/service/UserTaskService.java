@@ -19,7 +19,7 @@ public class UserTaskService {
     @Autowired
     UserTaskDao userTaskDao;
 
-    public UserTask getTask(String id) {
+    public UserTask getTask(int id) {
         return userTaskDao.get(id);
     }
 
@@ -32,21 +32,20 @@ public class UserTaskService {
     public int updateTask(String data) {
         JSONObject jsonObject = new JSONObject(data);
 
-        String id = jsonObject.getString("id");
+        int id = jsonObject.getInt("id");
         String name = jsonObject.getString("name");
         boolean status = jsonObject.getBoolean("status");
         Date deadline = valueOf(jsonObject.getString("deadline"));
         int priority = jsonObject.optInt("priority");
         String description = jsonObject.optString("description");
-        String listId = jsonObject.getString("listId");
+        int listId = jsonObject.getInt("listId");
 
 
         UserTask task = new UserTask(id, name, status, deadline, priority, description, listId);
         return userTaskDao.update(task);
     }
 
-    public String deleteTask(String id) {
-
-        return "taskResult";
+    public int deleteTask(int id) {
+        return userTaskDao.delete(id);
     }
 }
