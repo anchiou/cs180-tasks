@@ -1,0 +1,16 @@
+.List-header {
+    margin-bottom: 30px;
+}
+
+.Table-data {
+    padding: 1rem .75rem .75rem 0rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgb(222, 226, 230);
+}
+
+.Table-spacing {
+    margin-bottom: 0rem;
+}

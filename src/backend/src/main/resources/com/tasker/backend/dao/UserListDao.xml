@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tasker.backend.dao.UserListDao">
+
+    <insert id="addList">
+        INSERT INTO UserLists (ListName, UserID)
+        VALUES (#{listName}, #{userId});
+    </insert>
+
+    <update id="renameList">
+        UPDATE UserLists SET
+            ListName = #{listName},
+        WHERE ListID = #{listId};
+    </update>
+
+    <select id="get" resultType="com.tasker.backend.entity.UserList">
+        SELECT * FROM UserLists WHERE ListID = #{id};
+    </select>
+
+    <delete id="deleteList">
+        DELETE FROM UserLists WHERE ListID = #{listId};
+    </delete>
+
+    <select id="getTasks" resultType="com.tasker.backend.entity.UserTask">
+        SELECT * FROM UserTasks WHERE ListID = #{id};
+    </select>
+
+</mapper>

@@ -7,10 +7,10 @@ public class UserTask {
     // ------------------------
     // PRIVATE FIELDS
     // ------------------------
-    private String id;
+    private int id;
 
-    // UserTask name
-    private String name;
+    // UserTask taskName
+    private String taskName;
 
     // UserTask status (false: incomplete, true: complete)
     private boolean status;
@@ -24,6 +24,9 @@ public class UserTask {
     // UserTask description
     private String description;
 
+    // UserTask associated ListID
+    private int listId;
+
 
     // ------------------------
     // PUBLIC METHODS
@@ -31,37 +34,39 @@ public class UserTask {
 
     public UserTask() { }
 
-    public UserTask(String id, String name, boolean status) {
+    public UserTask(int id, String name, boolean status, int listId) {
         this.id = id;
-        this.name = name;
+        this.taskName = name;
         this.status = status;
+        this.listId = listId;
     }
 
-    public UserTask(String id, String name, boolean status, Date deadline, int priority, String description) {
+    public UserTask(int id, String taskName, boolean status, Date deadline, int priority, String description, int listId) {
         this.id = id;
-        this.name = name;
+        this.taskName = taskName;
         this.status = status;
         this.deadline = deadline;
         this.priority = priority;
         this.description = description;
+        this.listId = listId;
     }
 
     // Getter and setter methods
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(int value) {
         this.id = value;
     }
 
-    public String getName() {
-        return name;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public void setName(String value) {
-        this.name = value;
+    public void setTaskName(String value) {
+        this.taskName = value;
     }
 
     public boolean getStatus() {
@@ -96,11 +101,13 @@ public class UserTask {
         this.description = value;
     }
 
-    public void addTask(UserTask value) { }
+    public int getListId() {
+        return listId;
+    }
 
-    public void updateTask(UserTask value) { }
-
-    public void deleteTask(String id) { }
+    public void setListId(int value){
+        this.listId = value;
+    }
 
     @Override
     public String toString() {

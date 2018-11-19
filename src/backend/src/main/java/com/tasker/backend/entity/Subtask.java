@@ -5,7 +5,7 @@ public class Subtask {
     // PRIVATE FIELDS
     // ------------------------
     
-    private Long id;
+    private int id;
 
     // Subtask name
     private String name;
@@ -14,7 +14,7 @@ public class Subtask {
     private boolean status;
 
     // Subtask's corresponding UserTask
-    private Long taskId;
+    private int taskId;
 
 
     // ------------------------
@@ -23,7 +23,7 @@ public class Subtask {
 
     public Subtask() { }
 
-    public Subtask(Long id, String name, boolean status) {
+    public Subtask(int id, String name, boolean status) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -31,11 +31,11 @@ public class Subtask {
 
     // Getter and setter methods
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long value) {
+    public void setId(int value) {
         this.id = value;
     }
 

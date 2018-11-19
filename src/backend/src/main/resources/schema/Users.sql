@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS Users(
-	UserID CHAR(20) NOT NULL,
-  Email CHAR(50) NOT NULL,
-  Username CHAR(20) NOT NULL,
-	`Password` CHAR(20) NOT NULL,
-	PRIMARY KEY (UserID)
-);

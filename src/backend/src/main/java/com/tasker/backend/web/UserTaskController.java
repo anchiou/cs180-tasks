@@ -1,15 +1,14 @@
 package com.tasker.backend.web;
 
 import com.tasker.backend.RestResponse;
+import com.tasker.backend.entity.UserTask;
 import com.tasker.backend.service.UserTaskService;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/tasks")
 public class UserTaskController {
     static Logger logger = LoggerFactory.getLogger(UserTaskController.class);
@@ -17,18 +16,20 @@ public class UserTaskController {
     @Autowired
     UserTaskService userTaskService;
 
-    /*@GetMapping
-    public String getTask() {
+    @GetMapping
+    public String getTask(@RequestParam("id") int id) {
+        logger.info("------ /tasks GET Controller -------");
+        String result = "";
         try {
-            userTaskService.getTask();
-        } catch (IOException e) {
+            UserTask data = userTaskService.getTask(id);
+            result = data.toString();
+        } catch (Error e) {
             logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
-            e.printStackTrace();
+            return new RestResponse(400, e.getMessage() + "Failed to get task", result).toString();
         }
-        return "tasks";
+        return new RestResponse(200, "Successfully got task", result).toString();
     }
-
-    @GetMapping("/tasks?sort=deadline")
+    /*@GetMapping("/tasks?sort=deadline")
     public String sortByDeadline() {
         return "deadlines sorted";
     }
@@ -38,34 +39,42 @@ public class UserTaskController {
         return "priorities sorted";
     }*/
 
-
     @PostMapping
-    public RestResponse addTask(@RequestParam JSONObject data) {
+    public String addTask(@RequestBody UserTask data) {
+        logger.info("------ /tasks POST Controller -------");
         try {
-           userTaskService.addTask(data);
+            int result = userTaskService.addTask(data);
+            logger.info("addTask -> {}", result);
         } catch (Error e) {
-            return new RestResponse(400, e.getMessage() + "Failed to add task");
+            logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
+            return new RestResponse(400, e.getMessage() + "Failed to add task", null).toString();
         }
-        return new RestResponse(201, "Successfully added task");
+        return new RestResponse(201, "Successfully added task", null).toString();
     }
 
     @PutMapping
-    public RestResponse updateTask(JSONObject data) {
+    public String updateTask(String data) {
+        logger.info("------ /tasks PUT Controller -------");
         try {
-            userTaskService.updateTask(data);
+            int result = userTaskService.updateTask(data);
+            logger.info("updateTask -> {}", result);
         } catch (Error e) {
-            return new RestResponse(400, e.getMessage() + "Failed to update task");
+            logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
+            return new RestResponse(400, e.getMessage() + "Failed to add task", null).toString();
         }
-        return new RestResponse(201, "Successfully updated task");
+        return new RestResponse(201, "Successfully added task", null).toString();
     }
 
     @DeleteMapping
-    public RestResponse deleteTask(String id) {
+    public String deleteTask(@RequestParam("id") int id) {
+        logger.info("------ /tasks DELETE Controller -------");
         try {
-            userTaskService.deleteTask(id);
+            int result = userTaskService.deleteTask(id);
+            logger.info("deleteTask -> {}", result);
         } catch (Error e) {
-            return new RestResponse(400, e.getMessage() + "Failed to delete task");
+            logger.error("Error: {}\n{}", e.getMessage(), e.getStackTrace());
+            return new RestResponse(400, e.getMessage() + "Failed to delete task", null).toString();
         }
-        return new RestResponse(204, "Successfully deleted task");
+        return new RestResponse(204, "Successfully deleted task", null).toString();
     }
 }
