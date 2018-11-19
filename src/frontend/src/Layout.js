@@ -1,19 +1,35 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 // import {
 //     Navbar,
 //     NavbarBrand,
 //     Nav,
 //     NavItem,
 //     NavLink } from 'reactstrap';
+import { auth } from './firebase.js';
 
 import './Layout.css';
-import Home from './pages/Home';
 import Lists from './pages/MyLists';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
 class Layout extends React.Component {
+    constructor(props) {
+        super();
+
+        this.state = {
+            user: null
+        };
+    }
+
+    componentDidMount() {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                this.setState({ user });
+            }
+        });
+    }
+
     render () {
         return (
             <div>
@@ -30,12 +46,36 @@ class Layout extends React.Component {
                         </Nav>
                     </Navbar>
                 </header> */}
-                <main className="App-main">
+                <main className='App-main'>
                     <Switch>
-                        <Route exact path='/' component={Home}/>
-                        <Route exact path='/register' component={Register}/>
-                        <Route exact path='/login' component={Login}/>
-                        <Route path='/lists' component={Lists}/>
+                        <Route exact path='/' render={() => (
+                            this.state.user ? (
+                                <Redirect to='/lists'/>
+                            ) : (
+                                <Redirect to='/login'/>
+                            )
+                        )}/>
+                        <Route path='/lists' render={() => (
+                            this.state.user ? (
+                                <Lists />
+                            ) : (
+                                <Redirect to='/login'/>
+                            )
+                        )}/>
+                        <Route exact path='/login' render={() => (
+                            this.state.user ? (
+                                <Redirect to='/lists'/>
+                            ) : (
+                                <Login />
+                            )
+                        )}/>
+                        <Route exact path='/register' render={() => (
+                            this.state.user ? (
+                                <Redirect to='/lists'/>
+                            ) : (
+                                <Register />
+                            )
+                        )}/>
                         {/* <Route path='/groups' component={Groups}/> */}
                     </Switch>
                 </main>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import {
     Container,
     Col,
@@ -8,6 +9,7 @@ import {
     Nav,
     NavItem,
     NavLink } from 'reactstrap';
+import { auth } from '../firebase';
 
 import './Home.css';
 import logo from '../tasker.png';
@@ -15,7 +17,25 @@ import List from '../components/List';
 import ListTable from '../components/ListTable';
 
 class Lists extends React.Component {
+    constructor(props) {
+        super();
+        this.state= {
+            redirectToLogin: false
+        };
+    }
+
+    handleLogout = () => {
+        auth.signOut().then(function() {
+            console.log("Sign-out successful");
+            this.setState({ redirectToLogin: true });
+        }).catch(function(error) {
+            // An error happened.
+        });
+    }
+
     render() {
+        if (this.state.redirectToLogin) return <Redirect to="/login" />;
+
         return (
             <Container className="App-container">
                 <Row>
@@ -26,7 +46,9 @@ class Lists extends React.Component {
                         </NavbarBrand>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
-                                <NavLink href="/login">Logout</NavLink>
+                                <NavLink onClick={this.handleLogout}>
+                                    Logout
+                                </NavLink>
                             </NavItem>
                         </Nav>
                     </Navbar>
