@@ -1,11 +1,13 @@
 import React from 'react';
 import { Collapse, Nav, NavLink, Table } from 'reactstrap';
 
-class ListTable extends React.Component {
+import './List.css';
+
+class ListMenu extends React.Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
-        this.state = { collapse: false };
+        this.state = { collapse: true };
     }
 
     toggle() {
@@ -14,7 +16,7 @@ class ListTable extends React.Component {
 
     render() {
         return (
-            <Table>
+            <Table className="Table-spacing">
                 <tr>
                     <Nav>
                         <NavLink onClick={this.toggle}>My Lists</NavLink>
@@ -30,4 +32,4 @@ class ListTable extends React.Component {
     }
 }
 
-export default ListTable;
+export default ListMenu;

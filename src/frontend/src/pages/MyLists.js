@@ -14,7 +14,7 @@ import { auth } from '../firebase';
 import './Home.css';
 import logo from '../tasker.png';
 import List from '../components/List';
-import ListTable from '../components/ListTable';
+import ListMenu from '../components/ListMenu';
 
 class Lists extends React.Component {
     constructor(props) {
@@ -55,7 +55,7 @@ class Lists extends React.Component {
                 </Row>
                 <Row>
                     <Col className="Sidebar" sm="4">
-                        <ListTable />
+                        <ListMenu />
                     </Col>
                     <Col className="Content" sm="8">
                         <List />
