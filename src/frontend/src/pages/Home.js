@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import {
     Container,
     Col,
@@ -8,12 +9,33 @@ import {
     Nav,
     NavItem,
     NavLink } from 'reactstrap';
+import { auth } from '../firebase';
 
 import './Home.css';
 import logo from '../tasker.png';
+import List from '../components/List';
+import ListMenu from '../components/ListMenu';
 
 class Home extends React.Component {
-    render () {
+    constructor(props) {
+        super();
+        this.state = {
+            list: ""    // Id of current list displayed
+        };
+    }
+
+    handleLogout = () => {
+        auth.signOut().then(function() {
+            console.log("Sign-out successful");
+            return (<Redirect to="/login" />);
+        }).catch(function(error) {
+            console.error("Error logging out");
+        });
+    }
+
+    render() {
+        console.log("home -> uid: ", this.props.uid);
+
         return (
             <Container className="App-container">
                 <Row>
@@ -24,19 +46,27 @@ class Home extends React.Component {
                         </NavbarBrand>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
-                                <NavLink href="/lists">Lists</NavLink>
+                                <NavLink onClick={this.handleLogout}>
+                                    Logout
+                                </NavLink>
                             </NavItem>
                         </Nav>
                     </Navbar>
                 </Row>
                 <Row>
-                    <Col className="Sidebar">
-
+                    <Col className="Sidebar" sm="4">
+                        {this.props.uid && <ListMenu uid={this.props.uid}/>}
+                    </Col>
+                    <Col className="Content" sm="8">
+                        <List />
                     </Col>
                 </Row>
             </Container>
         );
     }
-};
 
+    componentWillUnmount() {
+        this.setState({ redirectToLogin: true });
+    }
+};
 export default Home;
