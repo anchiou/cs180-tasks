@@ -10,17 +10,18 @@ import {
     Label,
     Modal,
     ModalHeader,
-    ModalFooter,
     Table } from 'reactstrap';
+import { db } from '../firebase.js';
 
 import './List.css';
 import Task from './Task';
 
 function TaskList(props) {
     const tasks = props.tasks;
-    const listItems =  tasks.map((task) =>
+    const listItems = tasks.map((task) =>
         <Task
             key={task.id}
+            id={task.id}
             name={task.name}
             status={task.status}
             description={task.description}
@@ -37,14 +38,12 @@ class List extends React.Component {
         super(props);
 
         this.state = {
-            id: "0000",
-            name: "My Tasks",
-            tasks: [
-                {id: "0", name: "Basic Task", status: false,
-                    subtasks: []},
-                {id: "1", name: "Task with Subtasks", status: false,
-                    subtasks: ["Subtask 0", "Subtask 1"]}
-            ],
+            listId: "diccsZn15r7BBHLiPXp8", // TODO: this.props.listId
+            listName: "My Tasks",
+            taskname: "",
+            priority: "",
+            description: "",
+            tasks: [],
             modal: false
         };
     }
@@ -55,30 +54,81 @@ class List extends React.Component {
         });
     }
 
-    addTask = (e) => {
-        console.log("addTask event----", e);
+    handleSubmit = () => {
+        console.log("/lists/handleSubmit------", this.state);
+        db.collection("tasks").add({
+            name: this.state.taskName,
+            status: false,
+            priority: this.state.priority,
+            description: this.state.description,
+            listId: this.state.listId
+        })
+            .then((docRef) => {
+                console.log("addTask-----", docRef);
+                this.toggle();
+            })
+            .catch((error) => {
+                console.log("Error submitting document: ", error);
+            });
 
+        this.setState({
+            name: "",
+            priority: "",
+            description: ""
+        });
+    }
+
+    componentDidMount() {
+        db.collection("tasks").where("listId", "==", this.state.listId)
+            .onSnapshot((querySnapshot) => {
+                let newState = [];
+
+                querySnapshot.forEach((doc) => {
+                    let task = doc.data();
+                    console.log(`${doc.id} => ${doc.data()}`);
+                    console.log(doc.data().name);
+                    newState.push({
+                        id: doc.id,
+                        name: task.name,
+                        status: task.status,
+                        description: task.description,
+                        priority: task.priority,
+                        subtasks: task.subtasks,
+                    });
+                });
+
+                this.setState({
+                    tasks: newState
+                    // TODO: listId
+                });
+            });
     }
 
     render() {
         return (
             <div>
                 <header className="List-header">
-                    <h4>{this.state.name}</h4>
+                    <h4>{this.state.listName}</h4>
                 </header>
                 <main>
                     <TaskList tasks={this.state.tasks}/>
                     <Table>
-                        <tr>
-                            <td>
-                                <a href onClick={this.toggle}>
-                                    + Add Task
-                                </a>
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href onClick={this.toggle}>
+                                        + Add Task
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
                     </Table>
                     <Modal isOpen={this.state.modal} toggle={this.toggle}>
-                        <ModalHeader toggle={this.toggle}>Add Task</ModalHeader>
+                        <ModalHeader
+                            className="Modal-header"
+                            toggle={this.toggle}>
+                            Add Task
+                        </ModalHeader>
                         <Container>
                             <Form>
                                 <Row form>
@@ -89,14 +139,23 @@ class List extends React.Component {
                                                 type="text"
                                                 name="task"
                                                 id="exampleTask"
-                                                placeholder="Task Name" />
+                                                placeholder="Task Name"
+                                                onChange={e => this.setState(
+                                                    { taskName: e.target.value }
+                                                )}/>
                                         </FormGroup>
                                     </Col>
                                     <Col md={6}>
                                         <FormGroup>
-                                            <Label for="examplePriority">Priority</Label>
-                                            <Input type="select">
-                                                <option>Select Priority</option>
+                                            <Label for="examplePriority">
+                                                Priority
+                                            </Label>
+                                            <Input
+                                                type="select"
+                                                onChange={e => this.setState(
+                                                    { priority: e.target.value }
+                                                )}>
+                                                <option>None</option>
                                                 <option>Low</option>
                                                 <option>Medium</option>
                                                 <option>High</option>
@@ -105,27 +164,33 @@ class List extends React.Component {
                                     </Col>
                                 </Row>
                                 <FormGroup>
-                                    <Label for="exampleDescription">Description</Label>
+                                    <Label for="exampleDescription">
+                                        Description
+                                    </Label>
                                     <Input
                                         type="text"
                                         name="description"
                                         id="exampleDescription"
-                                        placeholder="Add a description to your task"/>
+                                        placeholder="Add a description to your task"
+                                        onChange={e => this.setState(
+                                            { description: e.target.value }
+                                        )}/>
                                 </FormGroup>
+                                <div className="Modal-footer">
+                                    <Button
+                                        type="button"
+                                        color="primary"
+                                        onClick={this.handleSubmit}>
+                                        Submit
+                                    </Button>{' '}
+                                    <Button
+                                        color="secondary"
+                                        onClick={this.toggle}>
+                                        Cancel
+                                    </Button>
+                                </div>
                             </Form>
                         </Container>
-                        <ModalFooter>
-                            <Button
-                                color="primary"
-                                onClick={this.toggle}>
-                                Submit
-                            </Button>{' '}
-                            <Button
-                                color="secondary"
-                                onClick={this.toggle}>
-                                Cancel
-                            </Button>
-                        </ModalFooter>
                     </Modal>
                 </main>
             </div>

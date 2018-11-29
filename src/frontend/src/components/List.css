@@ -2,6 +2,18 @@
     margin-bottom: 30px;
 }
 
+.List-menu {
+    margin-bottom: 0rem;
+}
+
+.Modal-header {
+    margin-bottom: 20px;
+}
+
+.Modal-footer {
+    padding-bottom: 30px;
+}
+
 .Table-data {
     padding: 1rem .75rem .75rem 0rem;
     vertical-align: top;
@@ -13,4 +25,13 @@
 
 .Table-spacing {
     margin-bottom: 0rem;
+}
+
+/* .Task-menu {
+    vertical-align: top;
+    border: 0;
+} */
+
+tr.Child-row td{
+    padding-left: 50px;
 }
