@@ -23,10 +23,11 @@ function ListItems(props) {
         <ListItem
             key={list.id}
             id={list.id}
-            name={list.name} />
+            name={list.name}
+            updateListView={props.updateListView}/>
     );
     return (
-        <div>{listItems}</div>
+        listItems
     );
 }
 
@@ -35,11 +36,17 @@ class ListMenu extends React.Component {
         super(props);
 
         this.state = {
-            name: "",   // Tracks new list name
-            lists: [],  // Array of lists owned by user
+            // current: "",    // Current list being viewed
+            name: "",       // Tracks new list name
+            lists: [],      // Array of lists owned by user
             collapse: true,
             modal: false
         };
+    }
+
+    updateListView = (lid) => {
+        console.log("ListMenu.updateListView -> lid: ", lid);
+        this.props.updateListView(lid);
     }
 
     toggle = () => {
@@ -94,23 +101,34 @@ class ListMenu extends React.Component {
             <div>
                 <Table className="List-menu">
                     <tbody>
-                        <tr>
-                            <Nav>
-                                <NavLink onClick={this.collapse}>
-                                    My Lists
-                                </NavLink>
-                                <NavLink onClick={this.toggle}>
+                        <tr className="List-row">
+                            <td>
+                                <Nav>
+                                    <NavLink onClick={this.collapse}>
+                                        My Lists
+                                    </NavLink>
+                                </Nav>
+                            </td>
+                            <td>
+                                <Button
+                                    outline={true}
+                                    color="primary"
+                                    onClick={this.toggle}>
                                     +
-                                </NavLink>
-                            </Nav>
-                        </tr>
-                        <tr>
-                            <Collapse isOpen={this.state.collapse}>
-                                <ListItems lists={this.state.lists} />
-                            </Collapse>
+                                </Button>
+                            </td>
                         </tr>
                     </tbody>
                 </Table>
+                <Collapse isOpen={this.state.collapse}>
+                    <Table className="List-menu" hover={true}>
+                        <tbody>
+                            <ListItems
+                                lists={this.state.lists}
+                                updateListView={this.updateListView} />
+                        </tbody>
+                    </Table>
+                </Collapse>
                 <Modal isOpen={this.state.modal} toggle={this.toggle}>
                     <ModalHeader
                         className="Modal-header"
