@@ -44,9 +44,9 @@ class ListMenu extends React.Component {
         };
     }
 
-    updateListView = (lid) => {
-        console.log("ListMenu.updateListView -> lid: ", lid);
-        this.props.updateListView(lid);
+    updateListView = (lid, name) => {
+        console.log("ListMenu.updateListView -> lid, name: ", lid, name);
+        this.props.updateListView(lid, name);
     }
 
     toggle = () => {

@@ -38,8 +38,6 @@ class List extends React.Component {
         super(props);
 
         this.state = {
-            // listId: "diccsZn15r7BBHLiPXp8",
-            listName: "My Tasks",
             taskname: "",
             priority: "",
             description: "",
@@ -52,6 +50,32 @@ class List extends React.Component {
         this.setState({
             modal: !this.state.modal
         });
+    }
+
+    fetchData = () => {
+        console.log("List -> props.lid: ", this.props.lid); 
+        db.collection("tasks").where("listId", "==", this.props.lid)
+            .onSnapshot((querySnapshot) => {
+                let newState = [];
+
+                querySnapshot.forEach((doc) => {
+                    let task = doc.data();
+                    console.log(`${doc.id} => ${doc.data()}`);
+                    console.log(doc.data().name);
+                    newState.push({
+                        id: doc.id,
+                        name: task.name,
+                        status: task.status,
+                        description: task.description,
+                        priority: task.priority,
+                        subtasks: task.subtasks,
+                    });
+                });
+
+                this.setState({
+                    tasks: newState
+                });
+            });
     }
 
     handleSubmit = () => {
@@ -78,29 +102,19 @@ class List extends React.Component {
         });
     }
 
-    componentDidMount() {
-        db.collection("tasks").where("listId", "==", this.props.lid)
-            .onSnapshot((querySnapshot) => {
-                let newState = [];
-
-                querySnapshot.forEach((doc) => {
-                    let task = doc.data();
-                    console.log(`${doc.id} => ${doc.data()}`);
-                    console.log(doc.data().name);
-                    newState.push({
-                        id: doc.id,
-                        name: task.name,
-                        status: task.status,
-                        description: task.description,
-                        priority: task.priority,
-                        subtasks: task.subtasks,
-                    });
-                });
-
-                this.setState({
-                    tasks: newState
-                });
+    deleteList = () => {
+        var taskRef = db.collection("lists").doc(this.props.lid);
+        taskRef.delete()
+            .then(() => {
+                console.log("--------deleteList Success");
+            })
+            .catch((err) => {
+                console.log(err);
             });
+    }
+
+    componentDidMount() {
+        this.fetchData();
     }
 
     render() {
@@ -111,7 +125,7 @@ class List extends React.Component {
                         <tbody>
                             <tr className="List-row">
                                 <td>
-                                    <h4>{this.state.listName}</h4>
+                                    <h4>{this.props.name}</h4>
                                 </td>
                                 <td align="right">
                                     <div className="icon menu gear_menu">
@@ -229,6 +243,12 @@ class List extends React.Component {
                 </main>
             </div>
         );
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.lid !== prevProps.lid) {
+            this.fetchData();
+        }
     }
 }
 

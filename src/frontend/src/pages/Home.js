@@ -20,13 +20,14 @@ class Home extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            list: null    // Id of current list displayed
+            lid: null,    // Id of current list displayed
+            name: null    // Name of current list displayed
         };
     }
 
-    updateListView = (lid) => {
-        console.log("Home.updateListView -> lid: ", lid);
-        this.setState({ list: lid });
+    updateListView = (lid, name) => {
+        console.log("Home.updateListView -> lid, name: ", lid, name);
+        this.setState({ lid: lid, name: name });
     }
 
     handleLogout = () => {
@@ -66,7 +67,9 @@ class Home extends React.Component {
                             updateListView={this.updateListView}/>}
                     </Col>
                     <Col className="Content" xs="8">
-                        {this.state.list && <List lid={this.state.list}/>}
+                        {this.state.lid && <List
+                            lid={this.state.lid}
+                            name={this.state.name} />}
                     </Col>
                 </Row>
             </Container>

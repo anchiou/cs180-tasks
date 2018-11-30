@@ -8,7 +8,7 @@ import './List.css';
 
 class ListItem extends React.Component {
     handleClick = () => {
-        this.props.updateListView(this.props.id);
+        this.props.updateListView(this.props.id, this.props.name);
     }
 
     render() {
