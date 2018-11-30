@@ -20,13 +20,13 @@ class Home extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            list: "diccsZn15r7BBHLiPXp8"    // Id of current list displayed
+            list: null    // Id of current list displayed
         };
     }
 
     updateListView = (lid) => {
-        //this.setState({ list: lid });
         console.log("Home.updateListView -> lid: ", lid);
+        this.setState({ list: lid });
     }
 
     handleLogout = () => {
