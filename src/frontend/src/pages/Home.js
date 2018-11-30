@@ -20,8 +20,13 @@ class Home extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            list: ""    // Id of current list displayed
+            list: "diccsZn15r7BBHLiPXp8"    // Id of current list displayed
         };
+    }
+
+    updateListView = (lid) => {
+        //this.setState({ list: lid });
+        console.log("Home.updateListView -> lid: ", lid);
     }
 
     handleLogout = () => {
@@ -55,10 +60,13 @@ class Home extends React.Component {
                 </Row>
                 <Row>
                     <Col className="Sidebar" sm="4">
-                        {this.props.uid && <ListMenu uid={this.props.uid}/>}
+                        {this.props.uid &&
+                        <ListMenu
+                            uid={this.props.uid}
+                            updateListView={this.updateListView}/>}
                     </Col>
-                    <Col className="Content" sm="8">
-                        <List />
+                    <Col className="Content" xs="8">
+                        {this.state.list && <List lid={this.state.list}/>}
                     </Col>
                 </Row>
             </Container>
@@ -66,7 +74,9 @@ class Home extends React.Component {
     }
 
     componentWillUnmount() {
-        this.setState({ redirectToLogin: true });
+        // return (
+        //     <Redirect to="/login" />
+        // );
     }
 };
 export default Home;

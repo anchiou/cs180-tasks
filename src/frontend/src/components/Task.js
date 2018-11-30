@@ -16,17 +16,17 @@ function SubtaskList (props) {
             <tbody>
                 <tr className="Child-row">
                     <td colSpan="0">
-                        <span class="pretty p-default p-round">
+                        <span className="pretty p-default p-round">
                             <input
                                 type="checkbox"
                                 defaultChecked={subtask.status} />
-                            <span class="state p-success-o">
+                            <span className="state p-success-o">
                                 <label>{subtask.name}</label>
                             </span>
                         </span>
                     </td>
                     <td align="right">
-                        <div class="icon menu gear_menu">
+                        <div className="icon menu gear_menu">
                             <svg
                                 width="15"
                                 height="3"
@@ -47,7 +47,7 @@ function SubtaskList (props) {
         </Table>
     );
     return (
-        <div>{listItems}</div>
+        listItems
     );
 }
 
@@ -72,7 +72,7 @@ class Task extends React.Component {
         console.log(taskRef);
 
         taskRef.update({
-            status: !taskRef.status
+            status: !taskRef.status // TODO: fix status update
         })
             .then(function() {
                 console.log("Status successfully updated!");
@@ -115,19 +115,19 @@ class Task extends React.Component {
                     <tbody>
                         <tr>
                             <div className="Table-data" >
-                                <span class="pretty p-default p-round">
+                                <span className="pretty p-default p-round">
                                     <input
                                         type="checkbox"
                                         onClick={this.updateStatus}
                                         defaultChecked={this.props.status} />
-                                    <span class="state p-success-o">
+                                    <span className="state p-success-o">
                                         <label>{this.props.name}</label>
                                     </span>
                                 </span>
                             </div>
                             <td align="right">
                                 <div
-                                    class="icon menu gear_menu"
+                                    className="icon menu gear_menu"
                                     onClick={this.toggle}>
                                     <svg
                                         width="15"
@@ -143,31 +143,31 @@ class Task extends React.Component {
                                         </path>
                                     </svg>
                                 </div>
-                                <div>
-                                    <Collapse isOpen={this.state.collapse}>
-                                        <tbody>
-                                            <tr>
-                                                <td onClick={this.deleteTask}>
-                                                    Delete Task
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td onClick={this.updateTask}>
-                                                    Edit Task
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td onClick={this.addSubtask}>
-                                                    Add Subtask
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </Collapse>
-                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </Table>
+                <Collapse isOpen={this.state.collapse}>
+                    <Table hover={true}>
+                        <tbody align="right">
+                            <tr>
+                                <td onClick={this.deleteTask}>
+                                    Delete Task
+                                </td>
+                            </tr>
+                            <tr>
+                                <td onClick={this.updateTask}>
+                                    Edit Task
+                                </td>
+                            </tr>
+                            <tr>
+                                <td onClick={this.addSubtask}>
+                                    Add Subtask
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </Collapse>
                 <SubtaskList subtasks={this.props.subtasks} />
             </div>
         );
