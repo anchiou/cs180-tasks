@@ -72,13 +72,12 @@ class Task extends React.Component {
         console.log(taskRef);
 
         taskRef.update({
-            status: !taskRef.status // TODO: fix status update
+            status: !this.props.status
         })
             .then(function() {
                 console.log("Status successfully updated!");
             })
             .catch(function(error) {
-                // The document probably doesn't exist.
                 console.error("Error updating document: ", error);
             });
     }
@@ -91,7 +90,6 @@ class Task extends React.Component {
                 console.log("Document successfully updated!");
             })
             .catch(function(error) {
-                // The document probably doesn't exist.
                 console.error("Error updating document: ", error);
             });
     }
