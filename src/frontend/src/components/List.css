@@ -1,5 +1,26 @@
 .List-header {
-    margin-bottom: 30px;
+    margin-bottom: 0px;
+}
+
+.Align-right {
+    float: right;
+}
+
+.List-menu {
+    margin-bottom: 0rem;
+    border-collapse: initial;
+}
+
+.Modal-header {
+    margin-bottom: 20px;
+}
+
+.Modal-footer {
+    padding-bottom: 30px;
+}
+
+.Task-menu-table {
+    size: 20px;
 }
 
 .Table-data {
@@ -13,4 +34,13 @@
 
 .Table-spacing {
     margin-bottom: 0rem;
+}
+
+tr.Child-row td{
+    padding-left: 50px;
+}
+
+tr.List-row td {
+    border-top: none;
+    padding: 0;
 }

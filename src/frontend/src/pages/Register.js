@@ -9,11 +9,47 @@ import {
     Input,
     Nav,
     NavLink } from 'reactstrap';
+import { auth } from '../firebase.js';
 
 import './Login.css';
 import logo from '../tasker.png';
 
 class Register extends React.Component {
+    constructor(props) {
+        super();
+
+        this.state = {
+            email: "",
+            password: ""
+        };
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+        auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
+            .then((response) => {
+                console.log('Register response:', response);
+                alert('Account created. Now logging you in ...');
+            })
+            .catch(function(error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                if (errorCode === 'auth/invalid-email') {
+                    alert('Invalid email');
+                } else if (errorCode === 'auth/email-already-in-use') {
+                    alert('Email already in use');
+                } else {
+                    alert(errorMessage);
+                }
+                console.log(error);
+            });
+
+        this.setState({
+            email: "",
+            password: ""
+        });
+    }
+
     render() {
         return (
             <div>
@@ -27,17 +63,10 @@ class Register extends React.Component {
                                     type="email"
                                     name="email"
                                     id="exampleEmail"
-                                    placeholder="Email" />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="exampleUsername">
-                                    Username
-                                </Label>
-                                <Input
-                                    type="username"
-                                    name="username"
-                                    id="exampleUsername"
-                                    placeholder="Username" />
+                                    placeholder="Email"
+                                    onChange={e => this.setState(
+                                        { email: e.target.value }
+                                    )}/>
                             </FormGroup>
                             <FormGroup>
                                 <Label for="examplePassword">Password</Label>
@@ -45,15 +74,18 @@ class Register extends React.Component {
                                     type="password"
                                     name="password"
                                     id="examplePassword"
-                                    placeholder="Password" />
+                                    placeholder="Password"
+                                    onChange={e => this.setState(
+                                        { password: e.target.value }
+                                    )}/>
                             </FormGroup>
+                            <Button type="button" color="primary" block href="/" onClick={this.handleSubmit}>
+                                Sign up
+                            </Button>
                         </Form>
-                        <Button color="primary" block href="/">
-                            Sign up
-                        </Button>
                         <Nav className="Text">
                             Already have an account?
-                            <NavLink className='No-padding' href='/login'>
+                            <NavLink className="No-padding" href="/login">
                                 Log in
                             </NavLink>
                         </Nav>

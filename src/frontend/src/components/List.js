@@ -10,17 +10,18 @@ import {
     Label,
     Modal,
     ModalHeader,
-    ModalFooter,
     Table } from 'reactstrap';
+import { db } from '../firebase.js';
 
 import './List.css';
 import Task from './Task';
 
 function TaskList(props) {
     const tasks = props.tasks;
-    const listItems =  tasks.map((task) =>
+    const listItems = tasks.map((task) =>
         <Task
             key={task.id}
+            id={task.id}
             name={task.name}
             status={task.status}
             description={task.description}
@@ -28,7 +29,7 @@ function TaskList(props) {
             subtasks={task.subtasks}/>
     );
     return (
-        <div>{listItems}</div>
+        listItems
     );
 }
 
@@ -37,48 +38,208 @@ class List extends React.Component {
         super(props);
 
         this.state = {
-            id: "0000",
-            name: "My Tasks",
-            tasks: [
-                {id: "0", name: "Basic Task", status: false,
-                    subtasks: []},
-                {id: "1", name: "Task with Subtasks", status: false,
-                    subtasks: ["Subtask 0", "Subtask 1"]}
-            ],
-            modal: false
+            currList: "",   // List name of currently viewed list
+            listName: "",   // Used to track form input
+            taskname: "",
+            priority: "",
+            description: "",
+            tasks: [],
+            taskModal: false,
+            listModal: false
         };
     }
 
-    toggle = () => {
+    toggleTask = () => {
         this.setState({
-            modal: !this.state.modal
+            taskModal: !this.state.taskModal
         });
     }
 
-    addTask = (e) => {
-        console.log("addTask event----", e);
+    toggleList = () => {
+        this.setState({
+            listModal: !this.state.listModal
+        });
+    }
 
+    fetchListName = () => {
+        const listRef = db.collection("lists").doc(this.props.lid);
+        listRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                console.log("getListName -> Document data:", doc.data());
+                let listName = doc.data().name;
+                this.setState({
+                    currList: listName
+                });
+            } else {
+                console.log("fetchListName: No such document!");
+                this.setState({
+                    currList: "",
+                    tasks: []
+                });
+            }
+        });
+    }
+
+    fetchData = () => {
+        console.log("List -> props.lid: ", this.props.lid);
+
+        db.collection("tasks").where("listId", "==", this.props.lid)
+            .onSnapshot((querySnapshot) => {
+                let newState = [];
+
+                querySnapshot.forEach((doc) => {
+                    let task = doc.data();
+                    console.log(`${doc.id} => ${doc.data()}`);
+                    console.log(doc.data().name);
+                    newState.push({
+                        id: doc.id,
+                        name: task.name,
+                        status: task.status,
+                        description: task.description,
+                        priority: task.priority,
+                        subtasks: task.subtasks,
+                    });
+                });
+
+                this.setState({
+                    tasks: newState
+                });
+            });
+    }
+
+    renameList = () => {
+        console.log("/lists/renameList------", this.state);
+        var taskRef = db.collection("lists").doc(this.props.lid);
+
+        taskRef.update({
+            name: this.state.listName
+        })
+            .then(() => {
+                console.log("List name successfully updated!");
+                this.toggleList();
+            })
+            .catch((error) => {
+                console.error("Error updating document: ", error);
+            });
+    }
+
+
+    handleSubmit = () => {
+        console.log("/lists/handleSubmit------", this.state);
+        db.collection("tasks").add({
+            name: this.state.taskName,
+            status: false,
+            priority: this.state.priority,
+            description: this.state.description,
+            listId: this.props.lid
+        })
+            .then((docRef) => {
+                console.log("addTask-----", docRef);
+                this.toggleTask();
+            })
+            .catch((error) => {
+                console.log("Error submitting document: ", error);
+            });
+
+        this.setState({
+            name: "",
+            priority: "",
+            description: ""
+        });
+    }
+
+    deleteList = () => {
+        var taskRef = db.collection("lists").doc(this.props.lid);
+        taskRef.delete()
+            .then(() => {
+                console.log("--------deleteList Success");
+                this.toggleList();
+            })
+            .catch((error) => {
+                console.log("Error deleting list: ", error);
+            });
+
+        // db.collection("tasks").where("listId", "==", this.props.lid).get()
+        //     .then((querySnapshot) => {
+        //         console.log("-------Deleting associated tasks");
+
+        //         var batch = db.batch();
+        //         querySnapshot.forEach((doc) => {
+        //             batch.delete(doc.ref);
+        //         });
+        //     })
+        //     .catch((error) => {
+        //         console.log("Error deleting associated tasks: ", error);
+        //     });
+    }
+
+    componentDidMount() {
+        this.fetchListName();
+        this.fetchData();
     }
 
     render() {
         return (
             <div>
                 <header className="List-header">
-                    <h4>{this.state.name}</h4>
+                    <Table>
+                        <tbody>
+                            <tr className="List-row">
+                                <td>
+                                    <h4>{this.state.currList}</h4>
+                                </td>
+                                <td align="right">
+                                    <div
+                                        className="icon menu gear_menu"
+                                        onClick={this.toggleList}>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            data-svgs-path="sm1/edit.svg">
+                                            <g fill="none" fillRule="evenodd">
+                                                <path
+                                                    fill="currentColor"
+                                                    d="M9.5 19h10a.5.5 0 1 1 0 1h-10a.5.5 0 1 1 0-1z" />
+                                                <path
+                                                    stroke="currentColor"
+                                                    d="M4.42 16.03a1.5 1.5 0 0
+                                                    0-.43.9l-.22 2.02a.5.5 0 0 0
+                                                    .55.55l2.02-.21a1.5 1.5 0 0 0
+                                                    .9-.44L18.7 7.4a1.5 1.5 0 0 0
+                                                    0-2.12l-.7-.7a1.5 1.5 0 0 0-2.13
+                                                    0L4.42 16.02z">
+                                                </path>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
                 </header>
                 <main>
                     <TaskList tasks={this.state.tasks}/>
                     <Table>
-                        <tr>
-                            <td>
-                                <a href onClick={this.toggle}>
-                                    + Add Task
-                                </a>
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td align="right">
+                                    <Button
+                                        outline={true}
+                                        color="primary"
+                                        onClick={this.toggleTask}>
+                                        + Add Task
+                                    </Button>
+                                </td>
+                            </tr>
+                        </tbody>
                     </Table>
-                    <Modal isOpen={this.state.modal} toggle={this.toggle}>
-                        <ModalHeader toggle={this.toggle}>Add Task</ModalHeader>
+                    <Modal isOpen={this.state.taskModal} toggle={this.toggleTask}>
+                        <ModalHeader
+                            className="Modal-header"
+                            toggle={this.toggleTask}>
+                            Add Task
+                        </ModalHeader>
                         <Container>
                             <Form>
                                 <Row form>
@@ -89,14 +250,23 @@ class List extends React.Component {
                                                 type="text"
                                                 name="task"
                                                 id="exampleTask"
-                                                placeholder="Task Name" />
+                                                placeholder="Task Name"
+                                                onChange={e => this.setState(
+                                                    { taskName: e.target.value }
+                                                )}/>
                                         </FormGroup>
                                     </Col>
                                     <Col md={6}>
                                         <FormGroup>
-                                            <Label for="examplePriority">Priority</Label>
-                                            <Input type="select">
-                                                <option>Select Priority</option>
+                                            <Label for="examplePriority">
+                                                Priority
+                                            </Label>
+                                            <Input
+                                                type="select"
+                                                onChange={e => this.setState(
+                                                    { priority: e.target.value }
+                                                )}>
+                                                <option>None</option>
                                                 <option>Low</option>
                                                 <option>Medium</option>
                                                 <option>High</option>
@@ -105,31 +275,88 @@ class List extends React.Component {
                                     </Col>
                                 </Row>
                                 <FormGroup>
-                                    <Label for="exampleDescription">Description</Label>
+                                    <Label for="exampleDescription">
+                                        Description
+                                    </Label>
                                     <Input
                                         type="text"
                                         name="description"
                                         id="exampleDescription"
-                                        placeholder="Add a description to your task"/>
+                                        placeholder="Add a description to your task"
+                                        onChange={e => this.setState(
+                                            { description: e.target.value }
+                                        )}/>
                                 </FormGroup>
+                                <div className="Modal-footer">
+                                    <Button
+                                        type="button"
+                                        color="primary"
+                                        onClick={this.handleSubmit}>
+                                        Submit
+                                    </Button>{' '}
+                                    <Button
+                                        color="secondary"
+                                        onClick={this.toggleTask}>
+                                        Cancel
+                                    </Button>
+                                </div>
                             </Form>
                         </Container>
-                        <ModalFooter>
-                            <Button
-                                color="primary"
-                                onClick={this.toggle}>
-                                Submit
-                            </Button>{' '}
-                            <Button
-                                color="secondary"
-                                onClick={this.toggle}>
-                                Cancel
-                            </Button>
-                        </ModalFooter>
+                    </Modal>
+                    <Modal isOpen={this.state.listModal} toggle={this.toggleList}>
+                        <ModalHeader
+                            className="Modal-header"
+                            toggle={this.toggleList}>
+                            Edit List
+                        </ModalHeader>
+                        <Container>
+                            <Form>
+                                <FormGroup>
+                                    <Label for="exampleListName">
+                                        List Name
+                                    </Label>
+                                    <Input
+                                        type="text"
+                                        name="listName"
+                                        id="examplelistName"
+                                        placeholder="List Name"
+                                        onChange={e => this.setState(
+                                            { listName: e.target.value }
+                                        )}/>
+                                </FormGroup>
+                                <div className="Modal-footer">
+                                    <Button
+                                        type="button"
+                                        color="primary"
+                                        onClick={this.renameList}>
+                                        Submit
+                                    </Button>{' '}
+                                    <Button
+                                        color="secondary"
+                                        onClick={this.toggleList}>
+                                        Cancel
+                                    </Button>
+                                    <div className="Align-right">
+                                        <Button
+                                            color="danger"
+                                            onClick={this.deleteList}>
+                                            Delete List
+                                        </Button>
+                                    </div>
+                                </div>
+                            </Form>
+                        </Container>
                     </Modal>
                 </main>
             </div>
         );
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.lid !== prevProps.lid) {
+            this.fetchListName();
+            this.fetchData();
+        }
     }
 }
 
