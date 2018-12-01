@@ -71,12 +71,29 @@ class Task extends React.Component {
             name: "",
             description: "",
             priority: "",
-            subtasks: [],
+            subtaskName: "",
             collapse: false,
             taskModal: false,
             subtaskModal: false
         };
     }
+
+    // createSubtask = () => {
+    //     // var subtaskMap = new Map();
+    //     // subtaskMap.set("name", this.state.subtaskName);
+    //     // subtaskMap.set("status", false);
+    //     // console.log("submap, props", subtaskMap, this.props.subtasks);
+    //     let subm = this.props.subtasks.push({
+    //         name: this.state.subtaskName,
+    //         status: false
+    //     });
+
+    //     console.log("subm", subm);
+    //     this.setState({ subtasks: this.props.subtasks.push({
+    //         name: this.state.subtaskName,
+    //         status: false
+    //     })});
+    // }
 
     toggle = () => {
         this.setState({ collapse: !this.state.collapse });
@@ -138,17 +155,38 @@ class Task extends React.Component {
     }
 
     addSubtask = () => {
+        // this.createSubtask();
+
         var taskRef = db.collection("tasks").doc(this.props.id);
-        taskRef.update({
-            subtasks: this.state.subtasks
-        })
-            .then(function() {
-                console.log("Subtask successfully added!");
-                this.toggleSubtask();
+        taskRef.get().then((doc) => {
+            const task = doc.data();
+            console.log("asdfg", task.subtasks);
+            let subMap = [];
+            subMap = task.subtasks;
+            subMap.push({name: this.state.subtaskName, status: false});
+            console.log("asdfgh", subMap);
+            taskRef.update({
+                subtasks: subMap
             })
-            .catch(function(error) {
-                console.error("addSubtask -> Error updating document: ", error);
-            });
+                .then(function() {
+                    console.log("Subtask successfully added!");
+                    //this.toggle();
+                })
+                .catch(function(error) {
+                    console.error("addSubtask -> Error updating document: ", error);
+                });
+        });
+
+        // taskRef.update({
+        //     subtasks: this.state.subtasks
+        // })
+        //     .then(function() {
+        //         console.log("Subtask successfully added!");
+        //         this.toggle();
+        //     })
+        //     .catch(function(error) {
+        //         console.error("addSubtask -> Error updating document: ", error);
+        //     });
     }
 
     render() {
@@ -297,10 +335,7 @@ class Task extends React.Component {
                                     id="exampleSubtask"
                                     placeholder="Subtask Name"
                                     onChange={e => this.setState(
-                                        { subtasks: this.props.subtasks.push({
-                                            name: e.target.value,
-                                            status: false
-                                        }) }
+                                        { subtaskName: e.target.value }
                                     )}/>
                             </FormGroup>
                             <div className="Modal-footer">
