@@ -38,22 +38,51 @@ class List extends React.Component {
         super(props);
 
         this.state = {
+            currList: "",   // List name of currently viewed list
+            listName: "",   // Used to track form input
             taskname: "",
             priority: "",
             description: "",
             tasks: [],
-            modal: false
+            taskModal: false,
+            listModal: false
         };
     }
 
-    toggle = () => {
+    toggleTask = () => {
         this.setState({
-            modal: !this.state.modal
+            taskModal: !this.state.taskModal
+        });
+    }
+
+    toggleList = () => {
+        this.setState({
+            listModal: !this.state.listModal
+        });
+    }
+
+    fetchListName = () => {
+        const listRef = db.collection("lists").doc(this.props.lid);
+        listRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                console.log("getListName -> Document data:", doc.data());
+                let listName = doc.data().name;
+                this.setState({
+                    currList: listName
+                });
+            } else {
+                console.log("fetchListName: No such document!");
+                this.setState({
+                    currList: "",
+                    tasks: []
+                });
+            }
         });
     }
 
     fetchData = () => {
-        console.log("List -> props.lid: ", this.props.lid); 
+        console.log("List -> props.lid: ", this.props.lid);
+
         db.collection("tasks").where("listId", "==", this.props.lid)
             .onSnapshot((querySnapshot) => {
                 let newState = [];
@@ -78,6 +107,23 @@ class List extends React.Component {
             });
     }
 
+    renameList = () => {
+        console.log("/lists/renameList------", this.state);
+        var taskRef = db.collection("lists").doc(this.props.lid);
+
+        taskRef.update({
+            name: this.state.listName
+        })
+            .then(() => {
+                console.log("List name successfully updated!");
+                this.toggleList();
+            })
+            .catch((error) => {
+                console.error("Error updating document: ", error);
+            });
+    }
+
+
     handleSubmit = () => {
         console.log("/lists/handleSubmit------", this.state);
         db.collection("tasks").add({
@@ -89,7 +135,7 @@ class List extends React.Component {
         })
             .then((docRef) => {
                 console.log("addTask-----", docRef);
-                this.toggle();
+                this.toggleTask();
             })
             .catch((error) => {
                 console.log("Error submitting document: ", error);
@@ -107,13 +153,28 @@ class List extends React.Component {
         taskRef.delete()
             .then(() => {
                 console.log("--------deleteList Success");
+                this.toggleList();
             })
-            .catch((err) => {
-                console.log(err);
+            .catch((error) => {
+                console.log("Error deleting list: ", error);
             });
+
+        // db.collection("tasks").where("listId", "==", this.props.lid).get()
+        //     .then((querySnapshot) => {
+        //         console.log("-------Deleting associated tasks");
+
+        //         var batch = db.batch();
+        //         querySnapshot.forEach((doc) => {
+        //             batch.delete(doc.ref);
+        //         });
+        //     })
+        //     .catch((error) => {
+        //         console.log("Error deleting associated tasks: ", error);
+        //     });
     }
 
     componentDidMount() {
+        this.fetchListName();
         this.fetchData();
     }
 
@@ -125,10 +186,12 @@ class List extends React.Component {
                         <tbody>
                             <tr className="List-row">
                                 <td>
-                                    <h4>{this.props.name}</h4>
+                                    <h4>{this.state.currList}</h4>
                                 </td>
                                 <td align="right">
-                                    <div className="icon menu gear_menu">
+                                    <div
+                                        className="icon menu gear_menu"
+                                        onClick={this.toggleList}>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="24"
@@ -164,17 +227,17 @@ class List extends React.Component {
                                     <Button
                                         outline={true}
                                         color="primary"
-                                        onClick={this.toggle}>
+                                        onClick={this.toggleTask}>
                                         + Add Task
                                     </Button>
                                 </td>
                             </tr>
                         </tbody>
                     </Table>
-                    <Modal isOpen={this.state.modal} toggle={this.toggle}>
+                    <Modal isOpen={this.state.taskModal} toggle={this.toggleTask}>
                         <ModalHeader
                             className="Modal-header"
-                            toggle={this.toggle}>
+                            toggle={this.toggleTask}>
                             Add Task
                         </ModalHeader>
                         <Container>
@@ -233,9 +296,53 @@ class List extends React.Component {
                                     </Button>{' '}
                                     <Button
                                         color="secondary"
-                                        onClick={this.toggle}>
+                                        onClick={this.toggleTask}>
                                         Cancel
                                     </Button>
+                                </div>
+                            </Form>
+                        </Container>
+                    </Modal>
+                    <Modal isOpen={this.state.listModal} toggle={this.toggleList}>
+                        <ModalHeader
+                            className="Modal-header"
+                            toggle={this.toggleList}>
+                            Edit List
+                        </ModalHeader>
+                        <Container>
+                            <Form>
+                                <FormGroup>
+                                    <Label for="exampleListName">
+                                        List Name
+                                    </Label>
+                                    <Input
+                                        type="text"
+                                        name="listName"
+                                        id="examplelistName"
+                                        placeholder="List Name"
+                                        onChange={e => this.setState(
+                                            { listName: e.target.value }
+                                        )}/>
+                                </FormGroup>
+                                <div className="Modal-footer">
+                                    <Button
+                                        type="button"
+                                        color="primary"
+                                        onClick={this.renameList}>
+                                        Submit
+                                    </Button>{' '}
+                                    <Button
+                                        color="secondary"
+                                        onClick={this.toggleList}>
+                                        Cancel
+                                    </Button>
+                                    <div className="Align-right">
+                                        <Button
+                                            color="danger"
+                                            onClick={this.deleteList}>
+                                            Delete List
+                                        </Button>
+                                    </div>
                                 </div>
                             </Form>
                         </Container>
@@ -247,6 +354,7 @@ class List extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.lid !== prevProps.lid) {
+            this.fetchListName();
             this.fetchData();
         }
     }

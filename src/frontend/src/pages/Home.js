@@ -67,9 +67,7 @@ class Home extends React.Component {
                             updateListView={this.updateListView}/>}
                     </Col>
                     <Col className="Content" xs="8">
-                        {this.state.lid && <List
-                            lid={this.state.lid}
-                            name={this.state.name} />}
+                        {this.state.lid && <List lid={this.state.lid} />}
                     </Col>
                 </Row>
             </Container>

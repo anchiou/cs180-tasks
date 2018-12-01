@@ -1,6 +1,16 @@
 import React from'react';
 import {
     Collapse,
+    Button,
+    Container,
+    Col,
+    Row,
+    Form,
+    FormGroup,
+    Input,
+    Label,
+    Modal,
+    ModalHeader,
     Table } from 'reactstrap';
 import { db } from '../firebase.js';
 
@@ -25,7 +35,7 @@ function SubtaskList (props) {
                             </span>
                         </span>
                     </td>
-                    <td align="right">
+                    {/* <td align="right">
                         <div className="icon menu gear_menu">
                             <svg
                                 width="15"
@@ -41,7 +51,7 @@ function SubtaskList (props) {
                                 </path>
                             </svg>
                         </div>
-                    </td>
+                    </td> */}
                 </tr>
             </tbody>
         </Table>
@@ -58,12 +68,30 @@ class Task extends React.Component {
         console.log("Task props----", this.props);
 
         this.state = {
-            collapse: false
+            name: "",
+            description: "",
+            priority: "",
+            subtasks: [],
+            collapse: false,
+            taskModal: false,
+            subtaskModal: false
         };
     }
 
     toggle = () => {
         this.setState({ collapse: !this.state.collapse });
+    }
+
+    toggleSubtask = () => {
+        this.setState({
+            subtaskModal: !this.state.subtaskModal
+        });
+    }
+
+    toggleTask = () => {
+        this.setState({
+            taskModal: !this.state.taskModal
+        });
     }
 
     updateStatus = () => {
@@ -83,14 +111,18 @@ class Task extends React.Component {
     }
 
     updateTask = () => {
-        db.collection("tasks").doc(this.props.id).update({
-            capital: true // TODO: make edit form
+        var taskRef = db.collection("tasks").doc(this.props.id);
+        taskRef.update({
+            name: this.state.name ? this.state.name : this.props.name,
+            description: this.state.description ? this.state.description : this.props.description,
+            priority: this.state.priority ? this.state.priority : this.props.priority
         })
             .then(function() {
-                console.log("Document successfully updated!");
+                console.log("Task successfully updated!");
+                this.toggleTask();
             })
             .catch(function(error) {
-                console.error("Error updating document: ", error);
+                console.error("updateTask -> Error updating document: ", error);
             });
     }
 
@@ -99,10 +131,23 @@ class Task extends React.Component {
         taskRef.delete()
             .then(() => {
                 console.log("--------deleteTask Success");
-                this.setState({collapse: true});
             })
             .catch((err) => {
                 console.log(err);
+            });
+    }
+
+    addSubtask = () => {
+        var taskRef = db.collection("tasks").doc(this.props.id);
+        taskRef.update({
+            subtasks: this.state.subtasks
+        })
+            .then(function() {
+                console.log("Subtask successfully added!");
+                this.toggleSubtask();
+            })
+            .catch(function(error) {
+                console.error("addSubtask -> Error updating document: ", error);
             });
     }
 
@@ -154,12 +199,12 @@ class Task extends React.Component {
                                 </td>
                             </tr>
                             <tr>
-                                <td onClick={this.updateTask}>
+                                <td onClick={this.toggleTask}>
                                     Edit Task
                                 </td>
                             </tr>
                             <tr>
-                                <td onClick={this.addSubtask}>
+                                <td onClick={this.toggleSubtask}>
                                     Add Subtask
                                 </td>
                             </tr>
@@ -167,8 +212,120 @@ class Task extends React.Component {
                     </Table>
                 </Collapse>
                 <SubtaskList subtasks={this.props.subtasks} />
+                <Modal isOpen={this.state.taskModal} toggle={this.toggleTask}>
+                    <ModalHeader
+                        className="Modal-header"
+                        toggle={this.toggleTask}>
+                        Edit Task
+                    </ModalHeader>
+                    <Container>
+                        <Form>
+                            <Row form>
+                                <Col md={6}>
+                                    <FormGroup>
+                                        <Label for="exampleTask">Task</Label>
+                                        <Input
+                                            type="text"
+                                            name="task"
+                                            id="exampleTask"
+                                            placeholder="Task Name"
+                                            onChange={e => this.setState(
+                                                { name: e.target.value }
+                                            )}/>
+                                    </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                    <FormGroup>
+                                        <Label for="examplePriority">
+                                            Priority
+                                        </Label>
+                                        <Input
+                                            type="select"
+                                            onChange={e => this.setState(
+                                                { priority: e.target.value }
+                                            )}>
+                                            <option>None</option>
+                                            <option>Low</option>
+                                            <option>Medium</option>
+                                            <option>High</option>
+                                        </Input>
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <FormGroup>
+                                <Label for="exampleDescription">
+                                    Description
+                                </Label>
+                                <Input
+                                    type="text"
+                                    name="description"
+                                    id="exampleDescription"
+                                    placeholder="Add a description to your task"
+                                    onChange={e => this.setState(
+                                        { description: e.target.value }
+                                    )}/>
+                            </FormGroup>
+                            <div className="Modal-footer">
+                                <Button
+                                    type="button"
+                                    color="primary"
+                                    onClick={this.updateTask}>
+                                    Submit
+                                </Button>{' '}
+                                <Button
+                                    color="secondary"
+                                    onClick={this.toggleTask}>
+                                    Cancel
+                                </Button>
+                            </div>
+                        </Form>
+                    </Container>
+                </Modal>
+                <Modal isOpen={this.state.subtaskModal} toggle={this.toggleSubtask}>
+                    <ModalHeader
+                        className="Modal-header"
+                        toggle={this.toggleSubtask}>
+                        Add Subtask
+                    </ModalHeader>
+                    <Container>
+                        <Form>
+                            <FormGroup>
+                                <Label for="exampleTask">Subtask</Label>
+                                <Input
+                                    type="text"
+                                    name="subtask"
+                                    id="exampleSubtask"
+                                    placeholder="Subtask Name"
+                                    onChange={e => this.setState(
+                                        { subtasks: this.props.subtasks.push({
+                                            name: e.target.value,
+                                            status: false
+                                        }) }
+                                    )}/>
+                            </FormGroup>
+                            <div className="Modal-footer">
+                                <Button
+                                    type="button"
+                                    color="primary"
+                                    onClick={this.addSubtask}>
+                                    Submit
+                                </Button>{' '}
+                                <Button
+                                    color="secondary"
+                                    onClick={this.toggleSubtask}>
+                                    Cancel
+                                </Button>
+                            </div>
+                        </Form>
+                    </Container>
+                </Modal>
             </div>
         );
+    }
+
+    componentWillUnmount() {
+        // var unsubscribe = db.collection("tasks").onSnapshot(function () {});
+        // unsubscribe();
     }
 }
 
