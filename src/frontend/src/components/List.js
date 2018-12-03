@@ -25,8 +25,7 @@ function TaskList(props) {
             name={task.name}
             status={task.status}
             description={task.description}
-            priority={task.priority}
-            subtasks={task.subtasks} />
+            priority={task.priority} />
     );
     return (
         listItems

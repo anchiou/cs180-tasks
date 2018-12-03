@@ -20,6 +20,7 @@ class Subtask extends React.Component {
 
         this.state = {
             name: "",
+            status: this.props.status,
             collapse: false,
             subtaskModal: false
         };
@@ -59,7 +60,6 @@ class Subtask extends React.Component {
             })
                 .then(function() {
                     console.log("Subtask successfully updated!");
-                    this.toggleSubtask();
                 })
                 .catch(function(error) {
                     console.error("updateTask -> Error updating document: ", error);
@@ -88,10 +88,14 @@ class Subtask extends React.Component {
                         <tr className="Child-row">
                             <td colSpan="0">
                                 <span className="pretty p-default p-round">
-                                    <input
+                                    {this.props.status && <input
                                         type="checkbox"
                                         onClick={this.updateStatus}
-                                        defaultChecked={this.props.status} />
+                                        defaultChecked={true} />}
+                                    {!this.props.input && <input
+                                        type="checkbox"
+                                        onClick={this.updateStatus}
+                                        defaultChecked={false} />}
                                     <span className="state p-success-o">
                                         <label>{this.props.name}</label>
                                     </span>
@@ -175,8 +179,11 @@ class Subtask extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.status !== prevProps.status) {
-            console.log("sdfghjkl");
+        if (this.props.id === prevProps.id) {
+            if (this.props.name !== prevProps.name) {
+                this.toggleSubtask();
+                this.toggle();
+            }
         }
     }
 }

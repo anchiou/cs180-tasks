@@ -16,6 +16,7 @@ import './List.css';
 import Subtask from './Subtask';
 
 function SubtaskList (props) {
+    console.log("-----help", props.subtasks);
     const subtasks = props.subtasks;
     const listItems =  subtasks.map((subtask) =>
         <Subtask
@@ -339,10 +340,13 @@ class Task extends React.Component {
         );
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.name !== prevProps.name) {
-            this.toggleTask();
-            this.toggle();
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.id === prevProps.id) {
+            if (this.props.name !== prevProps.name
+                || this.props.description !== prevProps.description) {
+                this.toggleTask();
+                this.toggle();
+            }
         }
     }
 }
