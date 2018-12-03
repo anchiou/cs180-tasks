@@ -323,7 +323,7 @@ class List extends React.Component {
                                         type="text"
                                         name="listName"
                                         id="examplelistName"
-                                        placeholder="List Name"
+                                        placeholder={this.state.currList}
                                         onChange={e => this.setState(
                                             { listName: e.target.value }
                                         )}/>

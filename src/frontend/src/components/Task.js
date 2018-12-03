@@ -16,7 +16,6 @@ import './List.css';
 import Subtask from './Subtask';
 
 function SubtaskList (props) {
-    console.log("-----help", props.subtasks);
     const subtasks = props.subtasks;
     const listItems =  subtasks.map((subtask) =>
         <Subtask
@@ -43,7 +42,8 @@ class Task extends React.Component {
             subtasks: [],
             collapse: false,
             taskModal: false,
-            subtaskModal: false
+            subtaskModal: false,
+            subscription: null
         };
     }
 
@@ -64,8 +64,6 @@ class Task extends React.Component {
     }
 
     fetchData = () => {
-        console.log("Task -> props.id: ", this.props.id);
-
         db.collection("subtasks").where("taskId", "==", this.props.id)
             .onSnapshot((querySnapshot) => {
                 let newState = [];
@@ -85,6 +83,7 @@ class Task extends React.Component {
                     subtasks: newState
                 });
             });
+        // this.setState({ subscription: subscription });
     }
 
     updateStatus = () => {
@@ -349,6 +348,10 @@ class Task extends React.Component {
             }
         }
     }
+
+    // componentWillUnmount() {
+    //     this.state.subscription.unsubscribe();
+    // }
 }
 
 export default Task;
