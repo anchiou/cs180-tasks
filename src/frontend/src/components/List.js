@@ -25,8 +25,7 @@ function TaskList(props) {
             name={task.name}
             status={task.status}
             description={task.description}
-            priority={task.priority}
-            subtasks={task.subtasks}/>
+            priority={task.priority} />
     );
     return (
         listItems
@@ -40,7 +39,7 @@ class List extends React.Component {
         this.state = {
             currList: "",   // List name of currently viewed list
             listName: "",   // Used to track form input
-            taskname: "",
+            taskName: "",
             priority: "",
             description: "",
             tasks: [],
@@ -58,25 +57,6 @@ class List extends React.Component {
     toggleList = () => {
         this.setState({
             listModal: !this.state.listModal
-        });
-    }
-
-    fetchListName = () => {
-        const listRef = db.collection("lists").doc(this.props.lid);
-        listRef.onSnapshot((doc) => {
-            if (doc.exists) {
-                console.log("getListName -> Document data:", doc.data());
-                let listName = doc.data().name;
-                this.setState({
-                    currList: listName
-                });
-            } else {
-                console.log("fetchListName: No such document!");
-                this.setState({
-                    currList: "",
-                    tasks: []
-                });
-            }
         });
     }
 
@@ -107,44 +87,22 @@ class List extends React.Component {
             });
     }
 
-    renameList = () => {
-        console.log("/lists/renameList------", this.state);
-        var taskRef = db.collection("lists").doc(this.props.lid);
-
-        taskRef.update({
-            name: this.state.listName
-        })
-            .then(() => {
-                console.log("List name successfully updated!");
-                this.toggleList();
-            })
-            .catch((error) => {
-                console.error("Error updating document: ", error);
-            });
-    }
-
-
-    handleSubmit = () => {
-        console.log("/lists/handleSubmit------", this.state);
-        db.collection("tasks").add({
-            name: this.state.taskName,
-            status: false,
-            priority: this.state.priority,
-            description: this.state.description,
-            listId: this.props.lid
-        })
-            .then((docRef) => {
-                console.log("addTask-----", docRef);
-                this.toggleTask();
-            })
-            .catch((error) => {
-                console.log("Error submitting document: ", error);
-            });
-
-        this.setState({
-            name: "",
-            priority: "",
-            description: ""
+    fetchListName = () => {
+        const listRef = db.collection("lists").doc(this.props.lid);
+        listRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                console.log("getListName -> Document data:", doc.data());
+                let listName = doc.data().name;
+                this.setState({
+                    currList: listName
+                });
+            } else {
+                console.log("fetchListName: No such document!");
+                this.setState({
+                    currList: "",
+                    tasks: []
+                });
+            }
         });
     }
 
@@ -171,6 +129,52 @@ class List extends React.Component {
         //     .catch((error) => {
         //         console.log("Error deleting associated tasks: ", error);
         //     });
+    }
+
+    renameList = () => {
+        console.log("/lists/renameList------", this.state);
+        var taskRef = db.collection("lists").doc(this.props.lid);
+
+        taskRef.update({
+            name: this.state.listName
+        })
+            .then(() => {
+                console.log("List name successfully updated!");
+                this.toggleList();
+            })
+            .catch((error) => {
+                console.error("Error updating document: ", error);
+            });
+    }
+
+    // Add Task
+    handleSubmit = () => {
+        console.log("/lists/handleSubmit------", this.state);
+
+        if (this.state.taskName !== "") {
+            db.collection("tasks").add({
+                name: this.state.taskName,
+                status: false,
+                priority: this.state.priority,
+                description: this.state.description,
+                listId: this.props.lid
+            })
+                .then((docRef) => {
+                    console.log("addTask-----", docRef);
+                    this.toggleTask();
+                })
+                .catch((error) => {
+                    console.log("Error submitting document: ", error);
+                });
+
+            this.setState({
+                name: "",
+                priority: "",
+                description: ""
+            });
+        } else {
+            alert("Error: Cannot create a task without a name. Please enter a task name.");
+        }
     }
 
     componentDidMount() {
@@ -319,7 +323,7 @@ class List extends React.Component {
                                         type="text"
                                         name="listName"
                                         id="examplelistName"
-                                        placeholder="List Name"
+                                        placeholder={this.state.currList}
                                         onChange={e => this.setState(
                                             { listName: e.target.value }
                                         )}/>

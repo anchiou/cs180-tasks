@@ -3,8 +3,6 @@ import {
     Collapse,
     Button,
     Container,
-    Col,
-    Row,
     Form,
     FormGroup,
     Input,
@@ -15,46 +13,16 @@ import {
 import { db } from '../firebase.js';
 
 import './List.css';
+import Subtask from './Subtask';
 
 function SubtaskList (props) {
-    if (!props.subtasks) {
-        return null;
-    }
     const subtasks = props.subtasks;
     const listItems =  subtasks.map((subtask) =>
-        <Table className="Table-spacing" key={subtask}>
-            <tbody>
-                <tr className="Child-row">
-                    <td colSpan="0">
-                        <span className="pretty p-default p-round">
-                            <input
-                                type="checkbox"
-                                defaultChecked={subtask.status} />
-                            <span className="state p-success-o">
-                                <label>{subtask.name}</label>
-                            </span>
-                        </span>
-                    </td>
-                    {/* <td align="right">
-                        <div className="icon menu gear_menu">
-                            <svg
-                                width="15"
-                                height="3"
-                                xmlns="http://www.w3.org/2000/svg"
-                                data-svgs-path="sm1/more_small.svg">
-                                <path
-                                    d="M1.5 3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0
-                                    3zm6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0
-                                    3zm6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"
-                                    fill="currentColor"
-                                    fillRule="evenodd">
-                                </path>
-                            </svg>
-                        </div>
-                    </td> */}
-                </tr>
-            </tbody>
-        </Table>
+        <Subtask
+            key={subtask.id}
+            id={subtask.id}
+            name={subtask.name}
+            status={subtask.status} />
     );
     return (
         listItems
@@ -70,30 +38,14 @@ class Task extends React.Component {
         this.state = {
             name: "",
             description: "",
-            priority: "",
             subtaskName: "",
+            subtasks: [],
             collapse: false,
             taskModal: false,
-            subtaskModal: false
+            subtaskModal: false,
+            subscription: null
         };
     }
-
-    // createSubtask = () => {
-    //     // var subtaskMap = new Map();
-    //     // subtaskMap.set("name", this.state.subtaskName);
-    //     // subtaskMap.set("status", false);
-    //     // console.log("submap, props", subtaskMap, this.props.subtasks);
-    //     let subm = this.props.subtasks.push({
-    //         name: this.state.subtaskName,
-    //         status: false
-    //     });
-
-    //     console.log("subm", subm);
-    //     this.setState({ subtasks: this.props.subtasks.push({
-    //         name: this.state.subtaskName,
-    //         status: false
-    //     })});
-    // }
 
     toggle = () => {
         this.setState({ collapse: !this.state.collapse });
@@ -111,10 +63,32 @@ class Task extends React.Component {
         });
     }
 
+    fetchData = () => {
+        db.collection("subtasks").where("taskId", "==", this.props.id)
+            .onSnapshot((querySnapshot) => {
+                let newState = [];
+
+                querySnapshot.forEach((doc) => {
+                    let subtask = doc.data();
+                    console.log(`${doc.id} => ${doc.data()}`);
+                    console.log(doc.data().name);
+                    newState.push({
+                        id: doc.id,
+                        name: subtask.name,
+                        status: subtask.status
+                    });
+                });
+
+                this.setState({
+                    subtasks: newState
+                });
+            });
+        // this.setState({ subscription: subscription });
+    }
+
     updateStatus = () => {
         console.log("----OnClick UpdateStatus");
         var taskRef = db.collection("tasks").doc(this.props.id);
-        console.log(taskRef);
 
         taskRef.update({
             status: !this.props.status
@@ -125,22 +99,34 @@ class Task extends React.Component {
             .catch(function(error) {
                 console.error("Error updating document: ", error);
             });
+
+        // Update associated subtasks
+        var batch = db.batch();
+        db.collection("subtasks").where("taskId", "==", this.props.id).get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    batch.update(doc.ref, {"status": this.props.status});
+                });
+                batch.commit().then(() => {
+                    console.log("Task.updateStatus -> batch update successful");
+                });
+            });
     }
 
     updateTask = () => {
-        var taskRef = db.collection("tasks").doc(this.props.id);
-        taskRef.update({
-            name: this.state.name ? this.state.name : this.props.name,
-            description: this.state.description ? this.state.description : this.props.description,
-            priority: this.state.priority ? this.state.priority : this.props.priority
-        })
-            .then(function() {
-                console.log("Task successfully updated!");
-                this.toggleTask();
+        if (this.state.name !== "" || this.state.description !== "") {
+            var taskRef = db.collection("tasks").doc(this.props.id);
+            taskRef.update({
+                name: this.state.name ? this.state.name : this.props.name,
+                description: this.state.description ? this.state.description : this.props.description,
             })
-            .catch(function(error) {
-                console.error("updateTask -> Error updating document: ", error);
-            });
+                .then(function() {
+                    console.log("Task successfully updated!");
+                })
+                .catch(function(error) {
+                    console.error("updateTask -> Error updating document: ", error);
+                });
+        }
     }
 
     deleteTask = () => {
@@ -155,38 +141,31 @@ class Task extends React.Component {
     }
 
     addSubtask = () => {
-        // this.createSubtask();
-
-        var taskRef = db.collection("tasks").doc(this.props.id);
-        taskRef.get().then((doc) => {
-            const task = doc.data();
-            console.log("asdfg", task.subtasks);
-            let subMap = [];
-            subMap = task.subtasks;
-            subMap.push({name: this.state.subtaskName, status: false});
-            console.log("asdfgh", subMap);
-            taskRef.update({
-                subtasks: subMap
+        if (this.state.subtaskName !== "") {
+            db.collection("subtasks").add({
+                name: this.state.subtaskName,
+                status: false,
+                taskId: this.props.id
             })
-                .then(function() {
-                    console.log("Subtask successfully added!");
-                    //this.toggle();
+                .then((docRef) => {
+                    console.log("addTask-----", docRef);
+                    this.toggle();
+                    this.toggleSubtask();
                 })
-                .catch(function(error) {
-                    console.error("addSubtask -> Error updating document: ", error);
+                .catch((error) => {
+                    console.log("Error submitting document: ", error);
                 });
-        });
 
-        // taskRef.update({
-        //     subtasks: this.state.subtasks
-        // })
-        //     .then(function() {
-        //         console.log("Subtask successfully added!");
-        //         this.toggle();
-        //     })
-        //     .catch(function(error) {
-        //         console.error("addSubtask -> Error updating document: ", error);
-        //     });
+            this.setState({
+                subtaskName: ""
+            });
+        } else {
+            alert("Error: Cannot create a subtask without a name. Please enter a subtask name.");
+        }
+    }
+
+    componentDidMount() {
+        this.fetchData();
     }
 
     render() {
@@ -206,6 +185,29 @@ class Task extends React.Component {
                                     </span>
                                 </span>
                             </div>
+                            {/* <td>
+                                    <div
+                                        className="icon menu gear_menu"
+                                        onClick={this.showDescription}>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            data-svgs-path="sm1/comments.svg">
+                                            <path
+                                                fill="none"
+                                                stroke="currentColor"
+                                                d="M16.5 18.58V16.5h.94c.73 0
+                                                1.01-.05 1.3-.2.24-.14.42-.32.55-.56.16-.29.21-.57.21-1.3V7.56c0-.73-.05-1.01-.2-1.3a1.32
+                                                1.32 0 0 0-.56-.55c-.29-.16-.57-.21-1.3-.21H6.56c-.73
+                                                0-1.01.05-1.3.2a1.32 1.32 0 0
+                                                0-.55.56c-.16.29-.21.57-.21 1.3v6.88c0
+                                                .73.05 1.01.2 1.3.14.24.32.42.56.55.29.16.57.21
+                                                1.3.21h5.6l3.55 2.49a.5.5 0 0 0 .79-.41z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                            </td> */}
                             <td align="right">
                                 <div
                                     className="icon menu gear_menu"
@@ -232,11 +234,6 @@ class Task extends React.Component {
                     <Table hover={true}>
                         <tbody align="right">
                             <tr>
-                                <td onClick={this.deleteTask}>
-                                    Delete Task
-                                </td>
-                            </tr>
-                            <tr>
                                 <td onClick={this.toggleTask}>
                                     Edit Task
                                 </td>
@@ -246,10 +243,15 @@ class Task extends React.Component {
                                     Add Subtask
                                 </td>
                             </tr>
+                            <tr>
+                                <td onClick={this.deleteTask}>
+                                    Delete Task
+                                </td>
+                            </tr>
                         </tbody>
                     </Table>
                 </Collapse>
-                <SubtaskList subtasks={this.props.subtasks} />
+                <SubtaskList subtasks={this.state.subtasks} />
                 <Modal isOpen={this.state.taskModal} toggle={this.toggleTask}>
                     <ModalHeader
                         className="Modal-header"
@@ -258,38 +260,17 @@ class Task extends React.Component {
                     </ModalHeader>
                     <Container>
                         <Form>
-                            <Row form>
-                                <Col md={6}>
-                                    <FormGroup>
-                                        <Label for="exampleTask">Task</Label>
-                                        <Input
-                                            type="text"
-                                            name="task"
-                                            id="exampleTask"
-                                            placeholder="Task Name"
-                                            onChange={e => this.setState(
-                                                { name: e.target.value }
-                                            )}/>
-                                    </FormGroup>
-                                </Col>
-                                <Col md={6}>
-                                    <FormGroup>
-                                        <Label for="examplePriority">
-                                            Priority
-                                        </Label>
-                                        <Input
-                                            type="select"
-                                            onChange={e => this.setState(
-                                                { priority: e.target.value }
-                                            )}>
-                                            <option>None</option>
-                                            <option>Low</option>
-                                            <option>Medium</option>
-                                            <option>High</option>
-                                        </Input>
-                                    </FormGroup>
-                                </Col>
-                            </Row>
+                            <FormGroup>
+                                <Label for="exampleTask">Task</Label>
+                                <Input
+                                    type="text"
+                                    name="task"
+                                    id="exampleTask"
+                                    placeholder={this.props.name}
+                                    onChange={e => this.setState(
+                                        { name: e.target.value }
+                                    )}/>
+                            </FormGroup>
                             <FormGroup>
                                 <Label for="exampleDescription">
                                     Description
@@ -298,7 +279,7 @@ class Task extends React.Component {
                                     type="text"
                                     name="description"
                                     id="exampleDescription"
-                                    placeholder="Add a description to your task"
+                                    placeholder={this.props.description}
                                     onChange={e => this.setState(
                                         { description: e.target.value }
                                     )}/>
@@ -358,10 +339,19 @@ class Task extends React.Component {
         );
     }
 
-    componentWillUnmount() {
-        // var unsubscribe = db.collection("tasks").onSnapshot(function () {});
-        // unsubscribe();
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.id === prevProps.id) {
+            if (this.props.name !== prevProps.name
+                || this.props.description !== prevProps.description) {
+                this.toggleTask();
+                this.toggle();
+            }
+        }
     }
+
+    // componentWillUnmount() {
+    //     this.state.subscription.unsubscribe();
+    // }
 }
 
 export default Task;

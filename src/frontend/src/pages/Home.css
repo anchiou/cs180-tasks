@@ -1,11 +1,14 @@
 .App-container {
-    max-width: 960px;
+    max-width: 75vw;
+    overflow: hidden;
 }
 
 .Content {
     background-color: #282c34f5;
     padding-left: 30px;
     padding-top: 50px;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 .Navbar {
@@ -21,10 +24,10 @@
 .Sidebar {
     background-color: #282c34fd;
     font-size: calc(6px + 2vmin);
-    height: 591px;
     padding-left: 30px;
     padding-top: 50px;
     /* position: fixed; */
     overflow-x: hidden;
     overflow-y: hidden;
+    min-height: 590px;
 }
