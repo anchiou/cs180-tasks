@@ -33,7 +33,6 @@ class Home extends React.Component {
     handleLogout = () => {
         auth.signOut().then(function() {
             console.log("Sign-out successful");
-            return (<Redirect to="/login" />);
         }).catch(function(error) {
             console.error("Error logging out");
         });
