@@ -73,11 +73,5 @@ class Home extends React.Component {
             </Container>
         );
     }
-
-    componentWillUnmount() {
-        // return (
-        //     <Redirect to="/login" />
-        // );
-    }
 };
 export default Home;

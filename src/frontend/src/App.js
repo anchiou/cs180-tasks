@@ -36,19 +36,6 @@ class App extends React.Component {
     render () {
         return (
             <div>
-                {/* <header>
-                    <Navbar className="Navbar" dark expand="md">
-                        <NavbarBrand
-                            href="/">
-                            <img className="Navbrand-img" src={logo} alt={logo}/>
-                        </NavbarBrand>
-                        <Nav className="ml-auto" navbar>
-                            <NavItem>
-                                <NavLink href="/lists">Logout</NavLink>
-                            </NavItem>
-                        </Nav>
-                    </Navbar>
-                </header> */}
                 <main className='App-main'>
                     <Switch>
                         <Route exact path='/' render={() => (
@@ -84,6 +71,12 @@ class App extends React.Component {
                 </main>
             </div>
         );
+    }
+
+    componentDidUpdate(prevState) {
+        if (this.state.user !== prevState.user) {
+            console.log("App", this.state.user, prevState.user);
+        }
     }
 }
 
