@@ -92,7 +92,7 @@ class Subtask extends React.Component {
                                         type="checkbox"
                                         onClick={this.updateStatus}
                                         defaultChecked={true} />}
-                                    {!this.props.input && <input
+                                    {!this.props.status && <input
                                         type="checkbox"
                                         onClick={this.updateStatus}
                                         defaultChecked={false} />}

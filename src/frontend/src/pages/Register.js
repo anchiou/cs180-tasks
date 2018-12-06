@@ -79,7 +79,7 @@ class Register extends React.Component {
                                         { password: e.target.value }
                                     )}/>
                             </FormGroup>
-                            <Button type="button" color="primary" block href="/" onClick={this.handleSubmit}>
+                            <Button type="button" color="primary" block onClick={this.handleSubmit}>
                                 Sign up
                             </Button>
                         </Form>

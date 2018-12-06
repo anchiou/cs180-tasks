@@ -79,7 +79,7 @@ class Login extends React.Component {
                                         { password: e.target.value }
                                     )}/>
                             </FormGroup>
-                            <Button type="button" color="primary" onClick={this.handleSubmit}>
+                            <Button type="button" block color="primary" onClick={this.handleSubmit}>
                                 Log in
                             </Button>
                         </Form>
