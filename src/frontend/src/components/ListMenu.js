@@ -105,7 +105,7 @@ class ListMenu extends React.Component {
                             <td>
                                 <Nav>
                                     <NavLink onClick={this.collapse}>
-                                        My Lists
+                                        <h4>My Lists</h4>
                                     </NavLink>
                                 </Nav>
                             </td>
